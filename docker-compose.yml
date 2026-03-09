@@ -1,0 +1,33 @@
+services:
+  # Banco de Dados Relacional (RNF-01)
+  atomik-db:
+    image: postgres:16-alpine
+    container_name: atomik-db
+    restart: always
+    environment:
+      POSTGRES_USER: atomik_user
+      POSTGRES_PASSWORD: atomik_password
+      POSTGRES_DB: atomik_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - atomik-network
+
+  # Cache e Mensageria (RNF-05)
+  atomik-redis:
+    image: redis:7-alpine
+    container_name: atomik-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - atomik-network
+
+networks:
+  atomik-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
