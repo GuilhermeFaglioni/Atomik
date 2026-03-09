@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: atomik-api
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/atomik_db
+    username: atomik_user
+    password: atomik_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate # Importante: Deixamos o Liquibase cuidar do schema
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+# Configuração do Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
