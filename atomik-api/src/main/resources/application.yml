@@ -10,11 +10,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate # Importante: Deixamos o Liquibase cuidar do schema
-    show-sql: true
+      ddl-auto: validate  # O Hibernate apenas valida o banco (Segurança)
+    show-sql: true        # Mostra o SQL no console
+    open-in-view: false   # Melhora a performance desativando o OSIV (Padrão Pleno)
     properties:
-      hibernate:
-        format_sql: true
+      "[hibernate.format_sql]": true
+      "[hibernate.highlight_sql]": true # Deixa o SQL colorido no terminal
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
