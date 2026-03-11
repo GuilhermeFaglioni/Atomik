@@ -18,7 +18,7 @@ spring:
       "[hibernate.highlight_sql]": true # Deixa o SQL colorido no terminal
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:db/changelog/db.changelog-master.yml
     enabled: true
 
   data:
