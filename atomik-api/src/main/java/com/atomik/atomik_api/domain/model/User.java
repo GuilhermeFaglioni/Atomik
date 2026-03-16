@@ -15,7 +15,7 @@ import lombok.Builder;
 public class User {
     private final UUID id;
     private final String name;
-    private final String email;
+    private final Email email;
     private final String passwordHash;
     private final String preferredCurrency;
     private final LocalDateTime createdAt;
@@ -24,7 +24,7 @@ public class User {
         User user = new User(
                 UUID.randomUUID(),
                 name,
-                email,
+                new Email(email),
                 passwordHash,
                 preferredCurrency != null ? preferredCurrency : "BRL",
                 LocalDateTime.now());
@@ -36,7 +36,7 @@ public class User {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name is required");
         }
-        if (email == null || !email.contains("@")) {
+        if (email == null || !email.value().contains("@")) {
             throw new IllegalArgumentException("Invalid email format");
         }
         if (passwordHash == null || passwordHash.isBlank()) {

@@ -53,7 +53,7 @@ public class BudgetEntity {
     @Column(name = "year", nullable = false)
     private Integer year;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    // @CreatedDate
+    // @Column(name = "created_at", nullable = false, updatable = false)
+    // private LocalDateTime createdAt;
 }

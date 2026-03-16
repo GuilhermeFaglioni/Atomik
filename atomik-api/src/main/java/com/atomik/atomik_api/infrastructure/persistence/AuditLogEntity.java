@@ -48,6 +48,6 @@ public class AuditLogEntity {
     private String newValue;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "changed_at", nullable = false, updatable = false)
+    private LocalDateTime changedAt;
 }

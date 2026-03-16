@@ -32,3 +32,8 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+api:
+  security:
+    token:
+      secret: mha-senha-secreta-super-dificil-de-descobrir-para-o-jwt-do-atomik
