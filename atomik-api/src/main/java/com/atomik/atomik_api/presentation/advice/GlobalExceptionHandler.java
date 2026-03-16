@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorMessageDTO> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
         var error = new ErrorMessageDTO(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.CONFLICT.value(),
                 ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
