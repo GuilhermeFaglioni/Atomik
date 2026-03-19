@@ -5,12 +5,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
 import com.atomik.atomik_api.domain.exception.EmailAlreadyExistsException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
+import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.presentation.validation.ErrorMessageDTO;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorMessageDTO> handleUserNotFoundException(UserNotFoundException ex) {
+        var error = new ErrorMessageDTO(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorMessageDTO> handleAuthException(UnauthorizedException ex) {
         var error = new ErrorMessageDTO(
@@ -33,5 +43,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT.value(),
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<ErrorMessageDTO> handleAccountNotFoundException(AccountNotFoundException ex) {
+        var error = new ErrorMessageDTO(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

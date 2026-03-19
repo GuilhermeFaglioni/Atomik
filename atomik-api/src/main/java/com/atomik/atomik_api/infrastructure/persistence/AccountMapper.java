@@ -11,6 +11,6 @@ public interface AccountMapper {
     @Mapping(target = "userId", source = "user.id")
     Account toDomain(AccountEntity entity);
 
-    @Mapping(target = "user.id", source = "userId")
+    @Mapping(target = "user", ignore = true)
     AccountEntity toEntity(Account domain);
 }
