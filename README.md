@@ -6,7 +6,7 @@ O projeto utiliza **Java 21** com **Clean Architecture** no backend para garanti
 
 ---
 
-## 🚀 Diferenciais Técnicos (Nível Pleno)
+## 🚀 Diferenciais Técnicos 
 
 * **Atomicidade & Integridade (RF-03):** Implementação do método de **Partidas Dobradas (Double-Entry Bookkeeping)**, garantindo que o dinheiro nunca "suma" entre contas através de transações atômicas.
 * **Resiliência Offline (RF-07):** Sincronização inteligente via **Service Workers** e **IndexedDB**, permitindo o uso completo do sistema sem conexão com a internet.
