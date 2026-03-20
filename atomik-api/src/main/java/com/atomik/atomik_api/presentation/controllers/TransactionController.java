@@ -12,14 +12,17 @@ import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
 import com.atomik.atomik_api.application.usecases.CreateTransferUseCase;
 import com.atomik.atomik_api.application.usecases.CreateUniqueTransactionUseCase;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/transactions")
-@RequiredArgsConstructor
 public class TransactionController {
     private final CreateUniqueTransactionUseCase createUniqueTransactionUseCase;
     private final CreateTransferUseCase createTransferUseCase;
+
+    public TransactionController(CreateUniqueTransactionUseCase createUniqueTransactionUseCase,
+            CreateTransferUseCase createTransferUseCase) {
+        this.createUniqueTransactionUseCase = createUniqueTransactionUseCase;
+        this.createTransferUseCase = createTransferUseCase;
+    }
 
     @PostMapping("/unique")
     public ResponseEntity<TransactionCreatedResponse> createUniqueTransaction(

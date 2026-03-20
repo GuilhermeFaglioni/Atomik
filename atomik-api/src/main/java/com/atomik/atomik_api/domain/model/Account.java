@@ -1,17 +1,8 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
-@Getter
-@Builder(toBuilder = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Account {
     private final UUID id;
     private final UUID userId;
@@ -30,6 +21,39 @@ public class Account {
                 LocalDateTime.now());
         account.validate();
         return account;
+    }
+
+    public Account(UUID id, UUID userId, String name, AccountType type, String currency, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+        this.type = type;
+        this.currency = currency;
+        this.createdAt = createdAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public AccountType getType() {
+        return type;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void validate() {

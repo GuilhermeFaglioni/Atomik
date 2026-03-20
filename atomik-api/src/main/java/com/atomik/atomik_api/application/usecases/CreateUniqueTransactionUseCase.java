@@ -16,14 +16,17 @@ import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CreateUniqueTransactionUseCase {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+
+    public CreateUniqueTransactionUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository, UserRepository userRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public TransactionCreatedResponse execute(String userId,

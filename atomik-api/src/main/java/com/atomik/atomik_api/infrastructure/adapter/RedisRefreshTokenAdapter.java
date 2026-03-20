@@ -9,13 +9,14 @@ import org.springframework.stereotype.Component;
 
 import com.atomik.atomik_api.domain.repository.RefreshTokenRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class RedisRefreshTokenAdapter implements RefreshTokenRepository {
     private final StringRedisTemplate redisTemplate;
     private static final String PREFIX = "refresh_token:";
+
+    public RedisRefreshTokenAdapter(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Override
     public void save(String token, UUID userId, Long expirationInSeconds) {

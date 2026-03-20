@@ -1,18 +1,32 @@
 package com.atomik.atomik_api.infrastructure.persistence;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
 import com.atomik.atomik_api.domain.model.Budget;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface BudgetMapper {
-    @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "categoryId", source = "category.id")
-    Budget toDomain(BudgetEntity budgetEntity);
+@Component
+public class BudgetMapper {
+    public Budget toDomain(BudgetEntity entity) {
+        if (entity == null)
+            return null;
+        return new Budget(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getCategoryId(),
+                entity.getLimitAmount(),
+                entity.getMonth(),
+                entity.getYear());
+    }
 
-    @Mapping(target = "user.id", source = "userId")
-    @Mapping(target = "category.id", source = "categoryId")
-    BudgetEntity toEntity(Budget budget);
+    public BudgetEntity toEntity(Budget domain) {
+        if (domain == null)
+            return null;
+        BudgetEntity entity = new BudgetEntity();
+        entity.setId(domain.getId());
+        entity.setLimitAmount(domain.getLimitAmount());
+        entity.setMonth(domain.getMonth());
+        entity.setYear(domain.getYear());
+        // Relationships (User and Category) should be handled by the RepositoryAdapter
+        return entity;
+    }
 }

@@ -1,22 +1,38 @@
 package com.atomik.atomik_api.infrastructure.persistence;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
 import com.atomik.atomik_api.domain.model.Transaction;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface TransactionMapper {
-    @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "categoryId", source = "category.id")
-    @Mapping(target = "sourceAccountId", source = "sourceAccount.id")
-    @Mapping(target = "destinationAccountId", source = "destinationAccount.id")
-    Transaction toDomain(TransactionEntity transactionEntity);
+@Component
+public class TransactionMapper {
+    public Transaction toDomain(TransactionEntity entity) {
+        if (entity == null) return null;
+        return new Transaction(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getCategoryId(),
+                entity.getSourceAccountId(),
+                entity.getDestinationAccountId(),
+                entity.getAmount(),
+                entity.getDescription(),
+                entity.getDate(),
+                entity.getType(),
+                entity.getSyncStatus(),
+                entity.getCreatedAt());
+    }
 
-    @Mapping(target = "user.id", source = "userId")
-    @Mapping(target = "category.id", source = "categoryId")
-    @Mapping(target = "sourceAccount.id", source = "sourceAccountId")
-    @Mapping(target = "destinationAccount.id", source = "destinationAccountId")
-    TransactionEntity toEntity(Transaction transaction);
+    public TransactionEntity toEntity(Transaction domain) {
+        if (domain == null) return null;
+        TransactionEntity entity = new TransactionEntity();
+        entity.setId(domain.getId());
+        entity.setAmount(domain.getAmount());
+        entity.setDescription(domain.getDescription());
+        entity.setDate(domain.getDate());
+        entity.setType(domain.getType());
+        entity.setSyncStatus(domain.getSyncStatus());
+        entity.setCreatedAt(domain.getCreatedAt());
+        // Relationships should be handled by the RepositoryAdapter
+        return entity;
+    }
 }

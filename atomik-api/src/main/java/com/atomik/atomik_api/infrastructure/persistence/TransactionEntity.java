@@ -20,22 +20,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "transactions")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-
 public class TransactionEntity {
     @Id
     @Column(columnDefinition = "UUID", nullable = false, updatable = false)
@@ -78,4 +66,60 @@ public class TransactionEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    protected TransactionEntity() {
+    }
+
+    public TransactionEntity(UUID id, UserEntity user, CategoryEntity category, AccountEntity sourceAccount,
+            AccountEntity destinationAccount, BigDecimal amount, String description, LocalDateTime date,
+            TransactionType type, SyncStatusType syncStatus, LocalDateTime createdAt) {
+        this.id = id;
+        this.user = user;
+        this.category = category;
+        this.sourceAccount = sourceAccount;
+        this.destinationAccount = destinationAccount;
+        this.amount = amount;
+        this.description = description;
+        this.date = date;
+        this.type = type;
+        this.syncStatus = syncStatus;
+        this.createdAt = createdAt;
+    }
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public UserEntity getUser() { return user; }
+    public void setUser(UserEntity user) { this.user = user; }
+
+    public CategoryEntity getCategory() { return category; }
+    public void setCategory(CategoryEntity category) { this.category = category; }
+
+    public AccountEntity getSourceAccount() { return sourceAccount; }
+    public void setSourceAccount(AccountEntity sourceAccount) { this.sourceAccount = sourceAccount; }
+
+    public AccountEntity getDestinationAccount() { return destinationAccount; }
+    public void setDestinationAccount(AccountEntity destinationAccount) { this.destinationAccount = destinationAccount; }
+
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public LocalDateTime getDate() { return date; }
+    public void setDate(LocalDateTime date) { this.date = date; }
+
+    public TransactionType getType() { return type; }
+    public void setType(TransactionType type) { this.type = type; }
+
+    public SyncStatusType getSyncStatus() { return syncStatus; }
+    public void setSyncStatus(SyncStatusType syncStatus) { this.syncStatus = syncStatus; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public UUID getUserId() { return user != null ? user.getId() : null; }
+    public UUID getCategoryId() { return category != null ? category.getId() : null; }
+    public UUID getSourceAccountId() { return sourceAccount != null ? sourceAccount.getId() : null; }
+    public UUID getDestinationAccountId() { return destinationAccount != null ? destinationAccount.getId() : null; }
 }

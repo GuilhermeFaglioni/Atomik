@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-balance-to-accounts
+      author: guilherme.faglioni
+      changes:
+        - addColumn:
+            tableName: accounts
+            columns:
+              - column:
+                  name: balance
+                  type: numeric(19, 2)
+                  defaultValueNumeric: 0.00
+                  constraints:
+                    nullable: false

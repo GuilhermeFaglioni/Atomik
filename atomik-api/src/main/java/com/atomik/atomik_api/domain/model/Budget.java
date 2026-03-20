@@ -1,19 +1,9 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-
-import lombok.Builder;
-
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Budget {
     private final UUID id;
     private final UUID userId;
@@ -21,14 +11,45 @@ public class Budget {
     private final BigDecimal limitAmount;
     private final Integer month;
     private final Integer year;
-    private final LocalDateTime createdAt;
 
     public static Budget createNewBudget(UUID userId, UUID categoryId, BigDecimal limitAmount, Integer month,
             Integer year) {
-        Budget budget = new Budget(UUID.randomUUID(), userId, categoryId, limitAmount, month, year,
-                LocalDateTime.now());
+        Budget budget = new Budget(UUID.randomUUID(), userId, categoryId, limitAmount, month, year);
         budget.validate();
         return budget;
+    }
+
+    public Budget(UUID id, UUID userId, UUID categoryId, BigDecimal limitAmount, Integer month, Integer year) {
+        this.id = id;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.limitAmount = limitAmount;
+        this.month = month;
+        this.year = year;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public BigDecimal getLimitAmount() {
+        return limitAmount;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public Integer getYear() {
+        return year;
     }
 
     public void validate() {

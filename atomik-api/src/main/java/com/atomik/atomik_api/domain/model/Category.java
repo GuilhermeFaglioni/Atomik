@@ -1,17 +1,7 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-
-import lombok.Builder;
-
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Category {
     private final UUID id;
     private final UUID userId;
@@ -30,6 +20,39 @@ public class Category {
                 isDefault != null ? isDefault : false);
         category.validate();
         return category;
+    }
+
+    public Category(UUID id, UUID userId, String name, String icon, String color, Boolean isDefault) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+        this.icon = icon;
+        this.color = color;
+        this.isDefault = isDefault;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public Boolean getIsDefault() {
+        return isDefault;
     }
 
     public void validate() {

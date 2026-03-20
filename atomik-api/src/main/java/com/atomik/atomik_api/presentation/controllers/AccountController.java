@@ -21,17 +21,24 @@ import com.atomik.atomik_api.application.usecases.GetAccountUseCase;
 import com.atomik.atomik_api.application.usecases.ListAccountsUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateAccountUseCase;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/accounts")
-@RequiredArgsConstructor
 public class AccountController {
     private final CreateAccountUseCase createAccountUseCase;
     private final DeleteAccountUseCase deleteAccountUseCase;
     private final GetAccountUseCase getAccountUseCase;
     private final ListAccountsUseCase listAccountsUseCase;
     private final UpdateAccountUseCase updateAccountUseCase;
+
+    public AccountController(CreateAccountUseCase createAccountUseCase, DeleteAccountUseCase deleteAccountUseCase,
+            GetAccountUseCase getAccountUseCase, ListAccountsUseCase listAccountsUseCase,
+            UpdateAccountUseCase updateAccountUseCase) {
+        this.createAccountUseCase = createAccountUseCase;
+        this.deleteAccountUseCase = deleteAccountUseCase;
+        this.getAccountUseCase = getAccountUseCase;
+        this.listAccountsUseCase = listAccountsUseCase;
+        this.updateAccountUseCase = updateAccountUseCase;
+    }
 
     @PostMapping("/create")
     public AccountCreatedResponse createAccount(@RequestBody CreateAccountRequestDTO request) {

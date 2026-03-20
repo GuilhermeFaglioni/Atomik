@@ -9,15 +9,19 @@ import com.atomik.atomik_api.domain.repository.UserRepository;
 import com.atomik.atomik_api.domain.service.PasswordHasherService;
 import com.atomik.atomik_api.domain.service.TokenService;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class AuthenticateUserUseCase {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordHasherService passwordHasherService;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    public AuthenticateUserUseCase(UserRepository userRepository, TokenService tokenService, PasswordHasherService passwordHasherService, RefreshTokenRepository refreshTokenRepository) {
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.passwordHasherService = passwordHasherService;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     public AuthResponse execute(String email, String password) {
         var user = userRepository.findByEmail(email)

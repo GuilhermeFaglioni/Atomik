@@ -11,13 +11,16 @@ import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class DeleteAccountUseCase {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+
+    public DeleteAccountUseCase(AccountRepository accountRepository, UserRepository userRepository) {
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
+    }
 
     public DeleteAccounteResponse execute(String userId, String accountId) {
         userRepository.findById(UUID.fromString(userId))

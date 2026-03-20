@@ -3,21 +3,31 @@ package com.atomik.atomik_api.infrastructure.persistence;
 import com.atomik.atomik_api.domain.model.Email;
 import com.atomik.atomik_api.domain.model.User;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserMapper {
+@Component
+public class UserMapper {
 
-    User toDomain(UserEntity entity);
-
-    UserEntity toEntity(User domain);
-
-    default Email map(String value) {
-        return value != null ? new Email(value) : null;
+    public User toDomain(UserEntity entity) {
+        if (entity == null) return null;
+        return new User(
+                entity.getId(),
+                entity.getName(),
+                new Email(entity.getEmail()),
+                entity.getPasswordHash(),
+                entity.getPreferredCurrency(),
+                entity.getCreatedAt());
     }
 
-    default String map(Email email) {
-        return email != null ? email.value() : null;
+    public UserEntity toEntity(User domain) {
+        if (domain == null) return null;
+        UserEntity entity = new UserEntity();
+        entity.setId(domain.getId());
+        entity.setName(domain.getName());
+        entity.setEmail(domain.getEmail().value());
+        entity.setPasswordHash(domain.getPasswordHash());
+        entity.setPreferredCurrency(domain.getPreferredCurrency());
+        entity.setCreatedAt(domain.getCreatedAt());
+        return entity;
     }
 }

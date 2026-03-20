@@ -41,11 +41,12 @@ public class DatabaseTransactionRepositoryAdapter implements TransactionReposito
 
     @Override
     public List<Transaction> findByAccountId(UUID accountId) {
-        return jpaTransactionRepository.findByAccountId(accountId).stream().map(transactionMapper::toDomain).toList();
+        return jpaTransactionRepository.findBySourceAccount_Id(accountId).stream().map(transactionMapper::toDomain)
+                .toList();
     }
 
     @Override
     public List<Transaction> findByUserId(UUID userId) {
-        return jpaTransactionRepository.findByUserId(userId).stream().map(transactionMapper::toDomain).toList();
+        return jpaTransactionRepository.findByUser_Id(userId).stream().map(transactionMapper::toDomain).toList();
     }
 }

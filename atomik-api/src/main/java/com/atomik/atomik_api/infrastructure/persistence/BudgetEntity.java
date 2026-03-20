@@ -3,31 +3,20 @@ package com.atomik.atomik_api.infrastructure.persistence;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "budgets")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 public class BudgetEntity {
     @Id
@@ -51,7 +40,72 @@ public class BudgetEntity {
     @Column(name = "year", nullable = false)
     private Integer year;
 
-    // @CreatedDate
-    // @Column(name = "created_at", nullable = false, updatable = false)
-    // private LocalDateTime createdAt;
+    protected BudgetEntity() {
+    }
+
+    public BudgetEntity(UUID id, UserEntity user, CategoryEntity category, BigDecimal limitAmount, Integer month,
+            Integer year) {
+        this.id = id;
+        this.user = user;
+        this.category = category;
+        this.limitAmount = limitAmount;
+        this.month = month;
+        this.year = year;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
+    }
+
+    public BigDecimal getLimitAmount() {
+        return limitAmount;
+    }
+
+    public void setLimitAmount(BigDecimal limitAmount) {
+        this.limitAmount = limitAmount;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public UUID getUserId() {
+        return user != null ? user.getId() : null;
+    }
+
+    public UUID getCategoryId() {
+        return category != null ? category.getId() : null;
+    }
 }

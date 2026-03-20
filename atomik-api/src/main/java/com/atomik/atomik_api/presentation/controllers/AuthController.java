@@ -16,15 +16,18 @@ import com.atomik.atomik_api.domain.exception.EmailAlreadyExistsException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticateUserUseCase authenticateUserUseCase;
     private final RegisterUserUseCase registerUserUseCase;
+
+    public AuthController(AuthenticateUserUseCase authenticateUserUseCase, RegisterUserUseCase registerUserUseCase) {
+        this.authenticateUserUseCase = authenticateUserUseCase;
+        this.registerUserUseCase = registerUserUseCase;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequestDTO request)

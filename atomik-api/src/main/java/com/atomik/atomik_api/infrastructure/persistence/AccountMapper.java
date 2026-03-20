@@ -1,16 +1,32 @@
 package com.atomik.atomik_api.infrastructure.persistence;
 
+import org.springframework.stereotype.Component;
+
 import com.atomik.atomik_api.domain.model.Account;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface AccountMapper {
+@Component
+public class AccountMapper {
 
-    @Mapping(target = "userId", source = "user.id")
-    Account toDomain(AccountEntity entity);
+    public Account toDomain(AccountEntity entity) {
+        if (entity == null) return null;
+        return new Account(
+                entity.getId(),
+                entity.getUser() != null ? entity.getUser().getId() : null,
+                entity.getName(),
+                entity.getType(),
+                entity.getCurrency(),
+                entity.getCreatedAt());
+    }
 
-    @Mapping(target = "user", ignore = true)
-    AccountEntity toEntity(Account domain);
+    public AccountEntity toEntity(Account domain) {
+        if (domain == null) return null;
+        AccountEntity entity = new AccountEntity();
+        entity.setId(domain.getId());
+        entity.setName(domain.getName());
+        entity.setType(domain.getType());
+        entity.setCurrency(domain.getCurrency());
+        entity.setCreatedAt(domain.getCreatedAt());
+        // User relation should be handled by the RepositoryAdapter
+        return entity;
+    }
 }

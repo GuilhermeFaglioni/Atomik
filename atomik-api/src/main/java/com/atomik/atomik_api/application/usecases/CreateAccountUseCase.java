@@ -11,13 +11,15 @@ import com.atomik.atomik_api.domain.model.AccountType;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CreateAccountUseCase {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+
+    public CreateAccountUseCase(AccountRepository accountRepository, UserRepository userRepository) {
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
+    }
 
     public AccountCreatedResponse execute(String userId, String name, AccountType type, String currency) {
         if (accountRepository.existsByNameAndUserId(name, UUID.fromString(userId))) {

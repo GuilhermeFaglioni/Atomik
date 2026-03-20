@@ -1,18 +1,8 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-
-import lombok.Builder;
-
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuditLog {
     private final UUID id;
     private final UUID transactionId;
@@ -32,6 +22,40 @@ public class AuditLog {
                 LocalDateTime.now());
         auditLog.validate();
         return auditLog;
+    }
+
+    public AuditLog(UUID id, UUID transactionId, String fieldChanged, String oldValue, String newValue,
+            LocalDateTime changedAt) {
+        this.id = id;
+        this.transactionId = transactionId;
+        this.fieldChanged = fieldChanged;
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+        this.changedAt = changedAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getTransactionId() {
+        return transactionId;
+    }
+
+    public String getFieldChanged() {
+        return fieldChanged;
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public String getNewValue() {
+        return newValue;
+    }
+
+    public LocalDateTime getChangedAt() {
+        return changedAt;
     }
 
     public void validate() {

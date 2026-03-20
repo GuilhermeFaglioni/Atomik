@@ -12,20 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "categories")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 public class CategoryEntity {
     @Id
@@ -44,4 +33,34 @@ public class CategoryEntity {
 
     @Column(name = "color", nullable = false)
     private String color;
+
+    protected CategoryEntity() {
+    }
+
+    public CategoryEntity(UUID id, UserEntity user, String name, String icon, String color) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.icon = icon;
+        this.color = color;
+    }
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public UserEntity getUser() { return user; }
+    public void setUser(UserEntity user) { this.user = user; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getIcon() { return icon; }
+    public void setIcon(String icon) { this.icon = icon; }
+
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+
+    public UUID getUserId() {
+        return user != null ? user.getId() : null;
+    }
 }

@@ -13,14 +13,18 @@ import com.atomik.atomik_api.infrastructure.persistence.AccountMapper;
 import com.atomik.atomik_api.infrastructure.persistence.JpaAccountRepository;
 import com.atomik.atomik_api.infrastructure.persistence.JpaUserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class AccountRepositoryAdapter implements AccountRepository {
     private final JpaAccountRepository jpaAccountRepository;
     private final JpaUserRepository jpaUserRepository;
     private final AccountMapper mapper;
+
+    public AccountRepositoryAdapter(JpaAccountRepository jpaAccountRepository, JpaUserRepository jpaUserRepository,
+            AccountMapper mapper) {
+        this.jpaAccountRepository = jpaAccountRepository;
+        this.jpaUserRepository = jpaUserRepository;
+        this.mapper = mapper;
+    }
 
     @Override
     public List<Account> findByUserId(UUID userId) {

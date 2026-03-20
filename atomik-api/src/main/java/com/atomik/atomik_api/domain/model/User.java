@@ -1,17 +1,8 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
     private final UUID id;
     private final String name;
@@ -19,6 +10,16 @@ public class User {
     private final String passwordHash;
     private final String preferredCurrency;
     private final LocalDateTime createdAt;
+
+    public User(UUID id, String name, Email email, String passwordHash, String preferredCurrency,
+            LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.preferredCurrency = preferredCurrency;
+        this.createdAt = createdAt;
+    }
 
     public static User createNewUser(String name, String email, String passwordHash, String preferredCurrency) {
         User user = new User(
@@ -43,4 +44,29 @@ public class User {
             throw new IllegalArgumentException("Password hash is required");
         }
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public String getPreferredCurrency() {
+        return preferredCurrency;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
 }

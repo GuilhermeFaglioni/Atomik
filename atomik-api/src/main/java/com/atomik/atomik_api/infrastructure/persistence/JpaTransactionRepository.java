@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JpaTransactionRepository extends JpaRepository<TransactionEntity, UUID> {
-    List<TransactionEntity> findByAccountId(UUID accountId);
+    List<TransactionEntity> findBySourceAccount_Id(UUID accountId);
 
-    List<TransactionEntity> findByUserId(UUID userId);
+    List<TransactionEntity> findByUser_Id(UUID userId);
 }

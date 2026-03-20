@@ -1,18 +1,9 @@
 package com.atomik.atomik_api.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
-@Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Transaction {
     private final UUID id;
     private final UUID userId;
@@ -65,6 +56,66 @@ public class Transaction {
                 LocalDateTime.now());
         transaction.validate();
         return transaction;
+    }
+
+    public Transaction(UUID id, UUID userId, UUID categoryId, UUID sourceAccountId, UUID destinationAccountId,
+            BigDecimal amount, String description, LocalDateTime date, TransactionType type, SyncStatusType syncStatus,
+            LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.sourceAccountId = sourceAccountId;
+        this.destinationAccountId = destinationAccountId;
+        this.amount = amount;
+        this.description = description;
+        this.date = date;
+        this.type = type;
+        this.syncStatus = syncStatus;
+        this.createdAt = createdAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public UUID getSourceAccountId() {
+        return sourceAccountId;
+    }
+
+    public UUID getDestinationAccountId() {
+        return destinationAccountId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public SyncStatusType getSyncStatus() {
+        return syncStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void validate() {

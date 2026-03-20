@@ -13,13 +13,15 @@ import com.atomik.atomik_api.domain.model.AccountType;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class UpdateAccountUseCase {
         private final AccountRepository accountRepository;
         private final UserRepository userRepository;
+
+        public UpdateAccountUseCase(AccountRepository accountRepository, UserRepository userRepository) {
+                this.accountRepository = accountRepository;
+                this.userRepository = userRepository;
+        }
 
         public AccountResponse execute(String userId, String id, String name, String currency, AccountType type) {
                 userRepository.findById(UUID.fromString(userId))
@@ -32,11 +34,8 @@ public class UpdateAccountUseCase {
                         throw new UnauthorizedException("You do not have permission to update this account");
                 }
 
-                var updatedAccount = existingAccount.toBuilder()
-                                .name(name)
-                                .currency(currency)
-                                .type(type)
-                                .build();
+                var updatedAccount = new Account(existingAccount.getId(), existingAccount.getUserId(), name, type,
+                                currency, existingAccount.getCreatedAt());
 
                 updatedAccount.validate();
                 var savedAccount = accountRepository.update(updatedAccount)
