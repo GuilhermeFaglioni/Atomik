@@ -35,7 +35,7 @@ public class UpdateAccountUseCase {
                 }
 
                 var updatedAccount = new Account(existingAccount.getId(), existingAccount.getUserId(), name, type,
-                                currency, existingAccount.getCreatedAt());
+                                currency, existingAccount.getCreatedAt(), existingAccount.getBalance());
 
                 updatedAccount.validate();
                 var savedAccount = accountRepository.update(updatedAccount)

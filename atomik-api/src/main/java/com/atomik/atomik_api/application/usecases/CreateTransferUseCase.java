@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
 import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
+import com.atomik.atomik_api.domain.model.Account;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
@@ -21,7 +22,8 @@ public class CreateTransferUseCase {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
-    public CreateTransferUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository, UserRepository userRepository) {
+    public CreateTransferUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository,
+            UserRepository userRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
@@ -30,22 +32,31 @@ public class CreateTransferUseCase {
     @Transactional
     public TransactionCreatedResponse execute(String userId, String categoryId, String sourceAccountId,
             String destinationAccountId, BigDecimal amount, String description, LocalDateTime date) {
+
+        Account sourceAccount = accountRepository.findById(UUID.fromString(sourceAccountId))
+                .orElseThrow(() -> new AccountNotFoundException("Source account not found"));
+        Account destinationAccount = accountRepository.findById(UUID.fromString(destinationAccountId))
+                .orElseThrow(() -> new AccountNotFoundException("Destination account not found"));
+
         if (userRepository.findById(UUID.fromString(userId)).isEmpty()) {
             throw new UserNotFoundException("User not found");
         }
-        if (accountRepository.findById(UUID.fromString(sourceAccountId)).isEmpty()
-                || accountRepository.findById(UUID.fromString(destinationAccountId)).isEmpty()) {
-            throw new AccountNotFoundException("Account not found");
-        }
 
-        if (accountRepository.findById(UUID.fromString(sourceAccountId))
-                .equals(accountRepository.findById(UUID.fromString(destinationAccountId)))) {
+        if (sourceAccount.equals(destinationAccount)) {
             throw new IllegalArgumentException("Source and destination accounts must be different");
         }
 
         var transaction = Transaction.createTransfer(UUID.fromString(userId), UUID.fromString(categoryId),
                 UUID.fromString(sourceAccountId), UUID.fromString(destinationAccountId), amount, description, date);
+
+        Account updatedSourceAccount = sourceAccount.withdraw(amount);
+        Account updatedDestinationAccount = destinationAccount.deposit(amount);
+
+        accountRepository.update(updatedSourceAccount);
+        accountRepository.update(updatedDestinationAccount);
+
         transactionRepository.save(transaction);
+
         return toResponse(transaction);
     }
 

@@ -8,18 +8,21 @@ import com.atomik.atomik_api.domain.model.Account;
 public class AccountMapper {
 
     public Account toDomain(AccountEntity entity) {
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         return new Account(
                 entity.getId(),
                 entity.getUser() != null ? entity.getUser().getId() : null,
                 entity.getName(),
                 entity.getType(),
                 entity.getCurrency(),
-                entity.getCreatedAt());
+                entity.getCreatedAt(),
+                entity.getBalance());
     }
 
     public AccountEntity toEntity(Account domain) {
-        if (domain == null) return null;
+        if (domain == null)
+            return null;
         AccountEntity entity = new AccountEntity();
         entity.setId(domain.getId());
         entity.setName(domain.getName());

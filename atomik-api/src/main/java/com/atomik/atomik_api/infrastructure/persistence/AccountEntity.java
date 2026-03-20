@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.atomik.atomik_api.domain.model.AccountType;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -44,17 +45,21 @@ public class AccountEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "balance", nullable = false)
+    private BigDecimal balance;
+
     public AccountEntity() {
     }
 
     public AccountEntity(UUID id, UserEntity user, String name, AccountType type, String currency,
-            LocalDateTime createdAt) {
+            LocalDateTime createdAt, BigDecimal balance) {
         this.id = id;
         this.user = user;
         this.name = name;
         this.type = type;
         this.currency = currency;
         this.createdAt = createdAt;
+        this.balance = balance;
     }
 
     public UUID getId() {
@@ -103,5 +108,13 @@ public class AccountEntity {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 }
