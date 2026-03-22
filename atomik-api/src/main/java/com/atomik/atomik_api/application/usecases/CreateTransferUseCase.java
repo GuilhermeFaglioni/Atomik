@@ -52,7 +52,7 @@ public class CreateTransferUseCase {
         Account updatedSourceAccount = sourceAccount.withdraw(amount);
         Account updatedDestinationAccount = destinationAccount.deposit(amount);
 
-        accountRepository.update(updatedSourceAccount);
+        accountRepository.update(updatedSourceAccount);      
         accountRepository.update(updatedDestinationAccount);
 
         transactionRepository.save(transaction);
