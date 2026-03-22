@@ -7,7 +7,8 @@ import com.atomik.atomik_api.domain.model.Transaction;
 @Component
 public class TransactionMapper {
     public Transaction toDomain(TransactionEntity entity) {
-        if (entity == null) return null;
+        if (entity == null)
+            return null;
         return new Transaction(
                 entity.getId(),
                 entity.getUserId(),
@@ -23,7 +24,8 @@ public class TransactionMapper {
     }
 
     public TransactionEntity toEntity(Transaction domain) {
-        if (domain == null) return null;
+        if (domain == null)
+            return null;
         TransactionEntity entity = new TransactionEntity();
         entity.setId(domain.getId());
         entity.setAmount(domain.getAmount());
@@ -32,7 +34,6 @@ public class TransactionMapper {
         entity.setType(domain.getType());
         entity.setSyncStatus(domain.getSyncStatus());
         entity.setCreatedAt(domain.getCreatedAt());
-        // Relationships should be handled by the RepositoryAdapter
         return entity;
     }
 }

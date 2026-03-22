@@ -2,6 +2,7 @@ package com.atomik.atomik_api.presentation.controllers;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +42,10 @@ public class AccountController {
     }
 
     @PostMapping("/create")
-    public AccountCreatedResponse createAccount(@RequestBody CreateAccountRequestDTO request) {
-        return createAccountUseCase.execute(request.userId(), request.name(), request.getType(),
+    public ResponseEntity<AccountCreatedResponse> createAccount(@RequestBody CreateAccountRequestDTO request) {
+        var response = createAccountUseCase.execute(request.userId(), request.name(), request.getType(),
                 request.currency());
+        return ResponseEntity.status(201).body(response);
     }
 
     @DeleteMapping("/{userId}/{id}")
@@ -52,18 +54,21 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}/{id}")
-    public AccountResponse getAccount(@PathVariable String userId, @PathVariable String id) {
-        return getAccountUseCase.execute(userId, id);
+    public ResponseEntity<AccountResponse> getAccount(@PathVariable String userId, @PathVariable String id) {
+        var response = getAccountUseCase.execute(userId, id);
+        return ResponseEntity.status(200).body(response);
     }
 
     @GetMapping("/{userId}")
-    public List<AccountResponse> listAccounts(@PathVariable String userId) {
-        return listAccountsUseCase.execute(userId);
+    public ResponseEntity<List<AccountResponse>> listAccounts(@PathVariable String userId) {
+        var response = listAccountsUseCase.execute(userId);
+        return ResponseEntity.status(200).body(response);
     }
 
     @PutMapping("/{userId}/{id}")
-    public AccountResponse updateAccount(@PathVariable String userId, @PathVariable String id,
+    public ResponseEntity<AccountResponse> updateAccount(@PathVariable String userId, @PathVariable String id,
             @RequestBody UpdateAccountRequestDTO request) {
-        return updateAccountUseCase.execute(userId, id, request.name(), request.currency(), request.getType());
+        var response = updateAccountUseCase.execute(userId, id, request.name(), request.currency(), request.getType());
+        return ResponseEntity.status(200).body(response);
     }
 }

@@ -35,6 +35,19 @@ public class DatabaseTransactionRepositoryAdapter implements TransactionReposito
     }
 
     @Override
+    public Optional<Transaction> update(Transaction transaction) {
+        return jpaTransactionRepository.findById(transaction.getId()).map(existingEntity -> {
+            existingEntity.setAmount(transaction.getAmount());
+            existingEntity.setDescription(transaction.getDescription());
+            existingEntity.setDate(transaction.getDate());
+            existingEntity.setType(transaction.getType());
+            existingEntity.setSyncStatus(transaction.getSyncStatus());
+            existingEntity.setCreatedAt(transaction.getCreatedAt());
+            return transactionMapper.toDomain(jpaTransactionRepository.save(existingEntity));
+        });
+    }
+
+    @Override
     public Optional<Transaction> findById(UUID id) {
         return jpaTransactionRepository.findById(id).map(transactionMapper::toDomain);
     }
