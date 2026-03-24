@@ -36,10 +36,11 @@ public class UserEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    protected UserEntity() {
+    }
 
-    protected UserEntity() {}
-
-    public UserEntity(UUID id, String name, String email, String passwordHash, String preferredCurrency, LocalDateTime createdAt) {
+    public UserEntity(UUID id, String name, String email, String passwordHash, String preferredCurrency,
+            LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -48,22 +49,52 @@ public class UserEntity {
         this.createdAt = createdAt;
     }
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public UUID getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getName() {
+        return name;
+    }
 
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getPreferredCurrency() { return preferredCurrency; }
-    public void setPreferredCurrency(String preferredCurrency) { this.preferredCurrency = preferredCurrency; }
+    public String getEmail() {
+        return email;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getPreferredCurrency() {
+        return preferredCurrency;
+    }
+
+    public void setPreferredCurrency(String preferredCurrency) {
+        this.preferredCurrency = preferredCurrency;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
 }

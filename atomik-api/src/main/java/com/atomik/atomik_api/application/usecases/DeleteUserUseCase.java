@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
+import com.atomik.atomik_api.domain.model.User;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
 @Service

@@ -35,4 +35,20 @@ public class DatabaseUserRepositoryAdapter implements UserRepository {
     public Optional<User> findById(UUID id) {
         return jpaUserRepository.findById(id).map(userMapper::toDomain);
     }
+
+    @Override
+    public void delete(User user) {
+        jpaUserRepository.delete(userMapper.toEntity(user));
+    }
+
+    @Override
+    public Optional<User> update(User user) {
+        return jpaUserRepository.findById(user.getId()).map(existingEntity -> {
+            existingEntity.setName(user.getName());
+            existingEntity.setEmail(user.getEmail().value());
+            existingEntity.setPasswordHash(user.getPasswordHash());
+            existingEntity.setPreferredCurrency(user.getPreferredCurrency());
+            return userMapper.toDomain(jpaUserRepository.save(existingEntity));
+        });
+    }
 }
