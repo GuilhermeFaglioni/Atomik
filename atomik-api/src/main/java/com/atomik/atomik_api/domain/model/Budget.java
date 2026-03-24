@@ -1,7 +1,6 @@
 package com.atomik.atomik_api.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Budget {
@@ -11,21 +10,24 @@ public class Budget {
     private final BigDecimal limitAmount;
     private final Integer month;
     private final Integer year;
+    private final String name;
 
     public static Budget createNewBudget(UUID userId, UUID categoryId, BigDecimal limitAmount, Integer month,
-            Integer year) {
-        Budget budget = new Budget(UUID.randomUUID(), userId, categoryId, limitAmount, month, year);
+            Integer year, String name) {
+        Budget budget = new Budget(UUID.randomUUID(), userId, categoryId, limitAmount, month, year, name);
         budget.validate();
         return budget;
     }
 
-    public Budget(UUID id, UUID userId, UUID categoryId, BigDecimal limitAmount, Integer month, Integer year) {
+    public Budget(UUID id, UUID userId, UUID categoryId, BigDecimal limitAmount, Integer month, Integer year,
+            String name) {
         this.id = id;
         this.userId = userId;
         this.categoryId = categoryId;
         this.limitAmount = limitAmount;
         this.month = month;
         this.year = year;
+        this.name = name;
     }
 
     public UUID getId() {
@@ -52,7 +54,14 @@ public class Budget {
         return year;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void validate() {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Budget name is required");
+        }
         if (limitAmount == null) {
             throw new IllegalArgumentException("Budget limitAmount is required");
         }

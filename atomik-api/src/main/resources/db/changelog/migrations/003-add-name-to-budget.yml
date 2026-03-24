@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-name-to-budget
+      author: guilherme.faglioni
+      changes:
+        - addColumn:
+            tableName: budgets
+            columns:
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

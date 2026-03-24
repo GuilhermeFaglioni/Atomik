@@ -20,16 +20,16 @@ public class AccountMapper {
                 entity.getBalance());
     }
 
-    public AccountEntity toEntity(Account domain) {
+    public AccountEntity toEntity(Account domain, UserEntity userEntity) {
         if (domain == null)
             return null;
         AccountEntity entity = new AccountEntity();
+        entity.setUser(userEntity);
         entity.setId(domain.getId());
         entity.setName(domain.getName());
         entity.setType(domain.getType());
         entity.setCurrency(domain.getCurrency());
         entity.setCreatedAt(domain.getCreatedAt());
-        // User relation should be handled by the RepositoryAdapter
         return entity;
     }
 }

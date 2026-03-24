@@ -38,6 +38,9 @@ public class BudgetEntity {
     @Column(name = "year", nullable = false)
     private Integer year;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     protected BudgetEntity() {
     }
 
@@ -105,5 +108,13 @@ public class BudgetEntity {
 
     public UUID getCategoryId() {
         return category != null ? category.getId() : null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

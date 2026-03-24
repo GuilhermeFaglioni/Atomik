@@ -40,7 +40,7 @@ public class CategoryController {
         this.listUserCategoriesUseCase = listUserCategoriesUseCase;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryRequestDTO request) {
         var response = createCategoryUseCase.execute(request.userId(), request.name(), request.icon(),
                 request.color(), request.isDefault());

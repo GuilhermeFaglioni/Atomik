@@ -15,18 +15,21 @@ public class BudgetMapper {
                 entity.getCategoryId(),
                 entity.getLimitAmount(),
                 entity.getMonth(),
-                entity.getYear());
+                entity.getYear(),
+                entity.getName());
     }
 
-    public BudgetEntity toEntity(Budget domain) {
+    public BudgetEntity toEntity(Budget domain, UserEntity userEntity, CategoryEntity categoryEntity) {
         if (domain == null)
             return null;
         BudgetEntity entity = new BudgetEntity();
         entity.setId(domain.getId());
+        entity.setUser(userEntity);
+        entity.setCategory(categoryEntity);
         entity.setLimitAmount(domain.getLimitAmount());
         entity.setMonth(domain.getMonth());
         entity.setYear(domain.getYear());
-        // Relationships (User and Category) should be handled by the RepositoryAdapter
+        entity.setName(domain.getName());
         return entity;
     }
 }
