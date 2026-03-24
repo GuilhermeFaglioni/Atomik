@@ -12,4 +12,8 @@ public interface UserRepository {
 
     Optional<User> findById(UUID id);
 
+    void delete(User user);
+
+    Optional<User> update(User user);
+
 }
