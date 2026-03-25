@@ -38,7 +38,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String id,
             @RequestBody UpdateUserRequestDTO request) {
-        var response = updateUserUseCase.execute(id, request.name(), request.email(), request.passwordHash());
+        var response = updateUserUseCase.execute(id, request.name(), request.email(), request.preferredCurrency());
         return ResponseEntity.status(200).body(response);
     }
 
