@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
 import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
+import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
+import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
@@ -21,11 +23,14 @@ public class CreateUniqueTransactionUseCase {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final AuditLogRepository auditLogRepository;
 
-    public CreateUniqueTransactionUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository, UserRepository userRepository) {
+    public CreateUniqueTransactionUseCase(TransactionRepository transactionRepository,
+            AccountRepository accountRepository, UserRepository userRepository, AuditLogRepository auditLogRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     @Transactional
@@ -47,6 +52,10 @@ public class CreateUniqueTransactionUseCase {
         }
         var transaction = Transaction.createSingleEntry(UUID.fromString(userId), UUID.fromString(categoryId),
                 UUID.fromString(accountId), amount, description, date, type);
+
+        AuditLog auditLog = AuditLog.createNewAuditLog(transaction.getId(), "New Unique Transaction", "N/A",
+                transaction.getAmount().toString());
+        auditLogRepository.save(auditLog);
         transactionRepository.save(transaction);
         return toResponse(transaction);
 

@@ -11,8 +11,10 @@ import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
 import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.Account;
+import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
+import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
@@ -21,12 +23,14 @@ public class CreateTransferUseCase {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final AuditLogRepository auditLogRepository;
 
     public CreateTransferUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, AuditLogRepository auditLogRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     @Transactional
@@ -52,8 +56,13 @@ public class CreateTransferUseCase {
         Account updatedSourceAccount = sourceAccount.withdraw(amount);
         Account updatedDestinationAccount = destinationAccount.deposit(amount);
 
-        accountRepository.update(updatedSourceAccount);      
+        accountRepository.update(updatedSourceAccount);
         accountRepository.update(updatedDestinationAccount);
+
+        AuditLog auditLog = AuditLog.createNewAuditLog(transaction.getId(), "newTransfer", "N/A",
+                transaction.getAmount().toString());
+
+        auditLogRepository.save(auditLog);
 
         transactionRepository.save(transaction);
 
