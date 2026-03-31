@@ -37,7 +37,7 @@ public class ListAllUserAuditLogs {
     private AuditLogResponseDTO toResponseDTO(AuditLog auditLog) {
         return new AuditLogResponseDTO(
                 auditLog.getId().toString(),
-                auditLog.getEntityId().toString(),
+                auditLog.getTransactionId().toString(),
                 auditLog.getFieldChanged(),
                 auditLog.getOldValue(),
                 auditLog.getNewValue(),
