@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.atomik.atomik_api.application.dto.AccountBalanceDTO;
 import com.atomik.atomik_api.application.dto.SyncRequestDTO;
@@ -16,7 +15,6 @@ import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.TransactionType;
 import com.atomik.atomik_api.domain.model.User;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
-import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
 @Service
@@ -39,7 +37,6 @@ public class SyncTransactionsUseCase {
         this.deleteTransactionUseCase = deleteTransactionUseCase;
     }
 
-    @Transactional
     public SyncResponseDTO execute(SyncRequestDTO request) {
         User user = userRepository.findById(UUID.fromString(request.userId()))
                 .orElseThrow(() -> new UserNotFoundException("User not found"));

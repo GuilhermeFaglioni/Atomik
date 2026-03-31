@@ -1,0 +1,84 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-recurring-transactions
+      author: guilhermefaglioni
+      changes:
+        - createTable:
+            tableName: recurring_transactions
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_recurring_user
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: category_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_recurring_category
+                    referencedTableName: categories
+                    referencedColumnNames: id
+              - column:
+                  name: source_account_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_recurring_source_account
+                    referencedTableName: accounts
+                    referencedColumnNames: id
+              - column:
+                  name: destination_account_id
+                  type: UUID
+                  constraints:
+                    foreignKeyName: fk_recurring_dest_account
+                    referencedTableName: accounts
+                    referencedColumnNames: id
+              - column:
+                  name: amount
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+              - column:
+                  name: frequency
+                  type: VARCHAR(50)
+              - column:
+                  name: start_date
+                  type: TIMESTAMP
+              - column:
+                  name: next_due_date
+                  type: TIMESTAMP
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+
+  - changeSet:
+      id: 004-02-add-recurring-ref-to-transactions
+      author: guilhermefaglioni
+      changes:
+        - addColumn:
+            tableName: transactions
+            columns:
+              - column:
+                  name: recurring_transaction_id
+                  type: UUID
+                  constraints:
+                    foreignKeyName: fk_transaction_recurring
+                    referencedTableName: recurring_transactions
+                    referencedColumnNames: id
