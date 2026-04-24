@@ -79,6 +79,16 @@ public class RecurringTransaction {
         }
     }
 
+    public RecurringTransaction updateStatus(RecurringTransaction recurringTransaction, RecurringStatus status) {
+        return new RecurringTransaction(recurringTransaction.id, recurringTransaction.userId,
+                recurringTransaction.categoryId,
+                recurringTransaction.sourceAccountId, recurringTransaction.destinationAccountId,
+                recurringTransaction.amount, recurringTransaction.description,
+                recurringTransaction.type, recurringTransaction.startDate, recurringTransaction.endDate,
+                recurringTransaction.nextDueDate, recurringTransaction.frequency,
+                status, recurringTransaction.createdAt);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -136,57 +146,3 @@ public class RecurringTransaction {
     }
 
 }
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    
-
-    
-        
-    

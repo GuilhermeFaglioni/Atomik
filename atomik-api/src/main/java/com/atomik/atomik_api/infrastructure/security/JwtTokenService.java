@@ -27,8 +27,8 @@ public class JwtTokenService implements TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("atomik-api")
-                    .withSubject(user.getEmail().value())
-                    .withClaim("id", user.getId().toString())
+                    .withSubject(user.getId().toString())
+                    .withClaim("email", user.getEmail().value())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException e) {

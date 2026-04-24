@@ -3,6 +3,7 @@ package com.atomik.atomik_api.presentation.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.atomik.atomik_api.application.usecases.DeleteCategoryUseCase;
 import com.atomik.atomik_api.application.usecases.GetCategoryUseCase;
 import com.atomik.atomik_api.application.usecases.ListUserCategoriesUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateCategoryUseCase;
+import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
 @RestController
 @RequestMapping("/categories")
@@ -29,47 +31,59 @@ public class CategoryController {
     private final UpdateCategoryUseCase updateCategoryUseCase;
     private final DeleteCategoryUseCase deleteCategoryUseCase;
     private final ListUserCategoriesUseCase listUserCategoriesUseCase;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetCategoryUseCase getCategoryUseCase,
             UpdateCategoryUseCase updateCategoryUseCase, DeleteCategoryUseCase deleteCategoryUseCase,
-            ListUserCategoriesUseCase listUserCategoriesUseCase) {
+            ListUserCategoriesUseCase listUserCategoriesUseCase,
+            AuthenticatedUserService authenticatedUserService) {
         this.createCategoryUseCase = createCategoryUseCase;
         this.getCategoryUseCase = getCategoryUseCase;
         this.updateCategoryUseCase = updateCategoryUseCase;
         this.deleteCategoryUseCase = deleteCategoryUseCase;
         this.listUserCategoriesUseCase = listUserCategoriesUseCase;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryRequestDTO request) {
-        var response = createCategoryUseCase.execute(request.userId(), request.name(), request.icon(),
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryRequestDTO request,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
+        var response = createCategoryUseCase.execute(authenticatedUserId, request.name(), request.icon(),
                 request.color(), request.isDefault());
         return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/{userId}/{id}")
-    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable String userId, @PathVariable String id) {
-        var response = getCategoryUseCase.execute(userId, id);
+    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable String userId, @PathVariable String id,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = getCategoryUseCase.execute(authenticatedUserId, id);
         return ResponseEntity.status(200).body(response);
     }
 
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable String userId, @PathVariable String id,
-            @RequestBody UpdateCategoryRequestDTO request) {
-        var response = updateCategoryUseCase.execute(userId, id, request.name(), request.icon(), request.color(),
-                request.isDefault());
+            @RequestBody UpdateCategoryRequestDTO request, Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = updateCategoryUseCase.execute(authenticatedUserId, id, request.name(), request.icon(),
+                request.color(), request.isDefault());
         return ResponseEntity.status(200).body(response);
     }
 
     @DeleteMapping("/{userId}/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable String userId, @PathVariable String id) {
-        deleteCategoryUseCase.execute(userId, id);
+    public ResponseEntity<Void> deleteCategory(@PathVariable String userId, @PathVariable String id,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        deleteCategoryUseCase.execute(authenticatedUserId, id);
         return ResponseEntity.status(204).build();
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<CategoryResponseDTO>> listUserCategories(@PathVariable String userId) {
-        var response = listUserCategoriesUseCase.execute(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> listUserCategories(@PathVariable String userId,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = listUserCategoriesUseCase.execute(authenticatedUserId);
         return ResponseEntity.status(200).body(response);
     }
 }

@@ -3,6 +3,7 @@ package com.atomik.atomik_api.presentation.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.atomik.atomik_api.application.usecases.DeleteTransactionUseCase;
 import com.atomik.atomik_api.application.usecases.GetTransactionUseCase;
 import com.atomik.atomik_api.application.usecases.ListUserTransactionUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateTransactionUseCase;
+import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
 @RestController
 @RequestMapping("/transactions")
@@ -33,31 +35,37 @@ public class TransactionController {
     private final ListUserTransactionUseCase listUserTransactionUseCase;
     private final UpdateTransactionUseCase updateTransactionUseCase;
     private final DeleteTransactionUseCase deleteTransactionUseCase;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public TransactionController(CreateUniqueTransactionUseCase createUniqueTransactionUseCase,
             CreateTransferUseCase createTransferUseCase, GetTransactionUseCase getTransactionUseCase,
             ListUserTransactionUseCase listUserTransactionUseCase, UpdateTransactionUseCase updateTransactionUseCase,
-            DeleteTransactionUseCase deleteTransactionUseCase) {
+            DeleteTransactionUseCase deleteTransactionUseCase,
+            AuthenticatedUserService authenticatedUserService) {
         this.createUniqueTransactionUseCase = createUniqueTransactionUseCase;
         this.createTransferUseCase = createTransferUseCase;
         this.getTransactionUseCase = getTransactionUseCase;
         this.listUserTransactionUseCase = listUserTransactionUseCase;
         this.updateTransactionUseCase = updateTransactionUseCase;
         this.deleteTransactionUseCase = deleteTransactionUseCase;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     @PostMapping("/unique")
     public ResponseEntity<TransactionCreatedResponse> createUniqueTransaction(
-            @RequestBody CreateUniqueTransactionRequestDTO request) {
-        var response = createUniqueTransactionUseCase.execute(request.userId(), request.categoryId(),
+            @RequestBody CreateUniqueTransactionRequestDTO request, Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
+        var response = createUniqueTransactionUseCase.execute(authenticatedUserId, request.categoryId(),
                 request.accountId(),
                 request.amount(), request.description(), request.date(), request.getType());
         return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionCreatedResponse> createTransfer(@RequestBody CreateTransferRequestDTO request) {
-        var response = createTransferUseCase.execute(request.userId(), request.categoryId(),
+    public ResponseEntity<TransactionCreatedResponse> createTransfer(@RequestBody CreateTransferRequestDTO request,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
+        var response = createTransferUseCase.execute(authenticatedUserId, request.categoryId(),
                 request.sourceAccountId(),
                 request.destinationAccountId(), request.amount(), request.description(), request.date());
         return ResponseEntity.status(201).body(response);
@@ -65,30 +73,37 @@ public class TransactionController {
 
     @GetMapping("/{userId}/{id}")
     public ResponseEntity<TransactionResponseDTO> getTransaction(@PathVariable String userId,
-            @PathVariable String id) {
-        var response = getTransactionUseCase.execute(userId, id);
+            @PathVariable String id, Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = getTransactionUseCase.execute(authenticatedUserId, id);
         return ResponseEntity.status(200).body(response);
     }
 
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<TransactionResponseDTO> updateTransaction(@PathVariable String userId,
             @PathVariable String id,
-            @RequestBody UpdateTransactionRequestDTO request) {
-        var response = updateTransactionUseCase.execute(id, userId, request.categoryId(), request.sourceAccountId(),
-                request.destinationAccountId(), request.amount(), request.description(), request.getDate(),
+            @RequestBody UpdateTransactionRequestDTO request, Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = updateTransactionUseCase.execute(id, authenticatedUserId, request.categoryId(),
+                request.sourceAccountId(), request.destinationAccountId(), request.amount(), request.description(),
+                request.getDate(),
                 request.getType());
         return ResponseEntity.status(200).body(response);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<TransactionResponseDTO>> listUserTransactions(@PathVariable String userId) {
-        var response = listUserTransactionUseCase.execute(userId);
+    public ResponseEntity<List<TransactionResponseDTO>> listUserTransactions(@PathVariable String userId,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        var response = listUserTransactionUseCase.execute(authenticatedUserId);
         return ResponseEntity.status(200).body(response);
     }
 
     @DeleteMapping("/{userId}/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable String userId, @PathVariable String id) {
-        deleteTransactionUseCase.execute(userId, id);
+    public ResponseEntity<Void> deleteTransaction(@PathVariable String userId, @PathVariable String id,
+            Authentication authentication) {
+        String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
+        deleteTransactionUseCase.execute(authenticatedUserId, id);
         return ResponseEntity.status(204).build();
     }
 
