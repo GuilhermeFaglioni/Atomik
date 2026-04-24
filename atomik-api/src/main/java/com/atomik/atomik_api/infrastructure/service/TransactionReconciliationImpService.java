@@ -24,22 +24,7 @@ public class TransactionReconciliationImpService implements TransactionReconcili
     }
 
     @Override
-    public void rollBack(Transaction oldState) {
-        Account sourceAccount = accountRepository.findById(oldState.getSourceAccountId())
-                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
-        if (oldState.getType() == TransactionType.TRANSFER) {
-            Account destinationAccount = accountRepository.findById(oldState.getDestinationAccountId())
-                    .orElseThrow(() -> new AccountNotFoundException("Account not found"));
-            accountRepository.update(sourceAccount.deposit(oldState.getAmount()));
-            accountRepository.update(destinationAccount.withdraw(oldState.getAmount()));
-        } else if (oldState.getType() == TransactionType.EXPENSE) {
-            accountRepository.update(sourceAccount.deposit(oldState.getAmount()));
-        } else if (oldState.getType() == TransactionType.REVENUE) {
-            accountRepository.update(sourceAccount.withdraw(oldState.getAmount()));
-        }
-    }
-
-    private void apply(Transaction state) {
+    public void apply(Transaction state) {
         Account sourceAcc = accountRepository.findById(state.getSourceAccountId())
                 .orElseThrow(() -> new AccountNotFoundException("Source account not found"));
         if (state.getType() == TransactionType.TRANSFER) {
@@ -54,4 +39,19 @@ public class TransactionReconciliationImpService implements TransactionReconcili
         }
     }
 
+    @Override
+    public void rollBack(Transaction oldState) {
+        Account sourceAccount = accountRepository.findById(oldState.getSourceAccountId())
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        if (oldState.getType() == TransactionType.TRANSFER) {
+            Account destinationAccount = accountRepository.findById(oldState.getDestinationAccountId())
+                    .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+            accountRepository.update(sourceAccount.deposit(oldState.getAmount()));
+            accountRepository.update(destinationAccount.withdraw(oldState.getAmount()));
+        } else if (oldState.getType() == TransactionType.EXPENSE) {
+            accountRepository.update(sourceAccount.deposit(oldState.getAmount()));
+        } else if (oldState.getType() == TransactionType.REVENUE) {
+            accountRepository.update(sourceAccount.withdraw(oldState.getAmount()));
+        }
+    }
 }

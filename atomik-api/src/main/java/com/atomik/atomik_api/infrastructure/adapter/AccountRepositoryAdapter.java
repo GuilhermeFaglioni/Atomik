@@ -51,6 +51,7 @@ public class AccountRepositoryAdapter implements AccountRepository {
             existingEntity.setName(account.getName());
             existingEntity.setCurrency(account.getCurrency());
             existingEntity.setType(account.getType());
+            existingEntity.setBalance(account.getBalance());
             return mapper.toDomain(jpaAccountRepository.save(existingEntity));
         });
     }

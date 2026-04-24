@@ -78,7 +78,7 @@ public class SyncTransactionsUseCase {
                         item.date(), TransactionType.valueOf(item.type()));
                 break;
             case "DELETE":
-                deleteTransactionUseCase.execute(item.id(), user.getId().toString());
+                deleteTransactionUseCase.execute(user.getId().toString(), item.id());
                 break;
             default:
                 throw new IllegalArgumentException("Invalid operation type: " + item.operationType());

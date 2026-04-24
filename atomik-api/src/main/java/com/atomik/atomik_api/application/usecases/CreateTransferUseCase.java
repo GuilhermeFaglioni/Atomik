@@ -7,63 +7,53 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
 import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
-import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
-import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.Account;
 import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
-import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
-import com.atomik.atomik_api.domain.repository.UserRepository;
+import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
 public class CreateTransferUseCase {
     private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
     private final AuditLogRepository auditLogRepository;
+    private final FinancialResourceOwnershipService financialResourceOwnershipService;
+    private final TransactionReconciliationService transactionReconciliationService;
 
-    public CreateTransferUseCase(TransactionRepository transactionRepository, AccountRepository accountRepository,
-            UserRepository userRepository, AuditLogRepository auditLogRepository) {
+    public CreateTransferUseCase(TransactionRepository transactionRepository, AuditLogRepository auditLogRepository,
+            FinancialResourceOwnershipService financialResourceOwnershipService,
+            TransactionReconciliationService transactionReconciliationService) {
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
         this.auditLogRepository = auditLogRepository;
+        this.financialResourceOwnershipService = financialResourceOwnershipService;
+        this.transactionReconciliationService = transactionReconciliationService;
     }
 
     @Transactional
     public TransactionCreatedResponse execute(String userId, String categoryId, String sourceAccountId,
             String destinationAccountId, BigDecimal amount, String description, LocalDateTime date) {
+        UUID parsedUserId = financialResourceOwnershipService.requireExistingUser(userId);
+        financialResourceOwnershipService.requireOwnedCategory(parsedUserId, categoryId);
+        Account sourceAccount = financialResourceOwnershipService.requireOwnedAccount(parsedUserId, sourceAccountId,
+                "Source account not found");
+        Account destinationAccount = financialResourceOwnershipService.requireOwnedAccount(parsedUserId,
+                destinationAccountId, "Destination account not found");
 
-        Account sourceAccount = accountRepository.findById(UUID.fromString(sourceAccountId))
-                .orElseThrow(() -> new AccountNotFoundException("Source account not found"));
-        Account destinationAccount = accountRepository.findById(UUID.fromString(destinationAccountId))
-                .orElseThrow(() -> new AccountNotFoundException("Destination account not found"));
-
-        if (userRepository.findById(UUID.fromString(userId)).isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-
-        if (sourceAccount.equals(destinationAccount)) {
+        if (sourceAccount.getId().equals(destinationAccount.getId())) {
             throw new IllegalArgumentException("Source and destination accounts must be different");
         }
 
-        var transaction = Transaction.createTransfer(UUID.fromString(userId), UUID.fromString(categoryId),
+        var transaction = Transaction.createTransfer(parsedUserId, UUID.fromString(categoryId),
                 UUID.fromString(sourceAccountId), UUID.fromString(destinationAccountId), amount, description, date);
-
-        Account updatedSourceAccount = sourceAccount.withdraw(amount);
-        Account updatedDestinationAccount = destinationAccount.deposit(amount);
-
-        accountRepository.update(updatedSourceAccount);
-        accountRepository.update(updatedDestinationAccount);
 
         AuditLog auditLog = AuditLog.createNewAuditLog(transaction.getId(), "newTransfer", "N/A",
                 transaction.getAmount().toString());
 
+        transactionReconciliationService.apply(transaction);
         auditLogRepository.save(auditLog);
-
         transactionRepository.save(transaction);
 
         return toResponse(transaction);

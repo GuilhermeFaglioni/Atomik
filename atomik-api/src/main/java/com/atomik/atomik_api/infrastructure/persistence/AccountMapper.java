@@ -30,6 +30,7 @@ public class AccountMapper {
         entity.setType(domain.getType());
         entity.setCurrency(domain.getCurrency());
         entity.setCreatedAt(domain.getCreatedAt());
+        entity.setBalance(domain.getBalance());
         return entity;
     }
 }

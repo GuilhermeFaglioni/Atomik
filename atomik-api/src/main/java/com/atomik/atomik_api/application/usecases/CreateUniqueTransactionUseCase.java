@@ -7,30 +7,30 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
 import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
-import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
-import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
-import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
-import com.atomik.atomik_api.domain.repository.UserRepository;
+import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
 public class CreateUniqueTransactionUseCase {
     private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
     private final AuditLogRepository auditLogRepository;
+    private final FinancialResourceOwnershipService financialResourceOwnershipService;
+    private final TransactionReconciliationService transactionReconciliationService;
 
     public CreateUniqueTransactionUseCase(TransactionRepository transactionRepository,
-            AccountRepository accountRepository, UserRepository userRepository, AuditLogRepository auditLogRepository) {
+            AuditLogRepository auditLogRepository,
+            FinancialResourceOwnershipService financialResourceOwnershipService,
+            TransactionReconciliationService transactionReconciliationService) {
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
         this.auditLogRepository = auditLogRepository;
+        this.financialResourceOwnershipService = financialResourceOwnershipService;
+        this.transactionReconciliationService = transactionReconciliationService;
     }
 
     @Transactional
@@ -41,18 +41,17 @@ public class CreateUniqueTransactionUseCase {
             String description,
             LocalDateTime date,
             TransactionType type) {
-        if (userRepository.findById(UUID.fromString(userId)).isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        if (accountRepository.findById(UUID.fromString(userId)).isEmpty()) {
-            throw new AccountNotFoundException("Account not found");
-        }
+        UUID parsedUserId = financialResourceOwnershipService.requireExistingUser(userId);
+        financialResourceOwnershipService.requireOwnedCategory(parsedUserId, categoryId);
+        financialResourceOwnershipService.requireOwnedAccount(parsedUserId, accountId, "Account not found");
+
         if (type.equals(TransactionType.TRANSFER)) {
             throw new IllegalArgumentException("Use createTransfer for transfer type");
         }
-        var transaction = Transaction.createSingleEntry(UUID.fromString(userId), UUID.fromString(categoryId),
+        var transaction = Transaction.createSingleEntry(parsedUserId, UUID.fromString(categoryId),
                 UUID.fromString(accountId), amount, description, date, type);
 
+        transactionReconciliationService.apply(transaction);
         AuditLog auditLog = AuditLog.createNewAuditLog(transaction.getId(), "New Unique Transaction", "N/A",
                 transaction.getAmount().toString());
         auditLogRepository.save(auditLog);

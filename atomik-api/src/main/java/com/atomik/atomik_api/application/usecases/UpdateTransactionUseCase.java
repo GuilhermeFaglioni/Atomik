@@ -8,33 +8,32 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
 import com.atomik.atomik_api.application.dto.TransactionResponseDTO;
 import com.atomik.atomik_api.domain.exception.TransactionNotFoundException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
-import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
-import com.atomik.atomik_api.domain.model.User;
 import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
-import com.atomik.atomik_api.domain.repository.UserRepository;
 import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
 public class UpdateTransactionUseCase {
         private final TransactionRepository transactionRepository;
-        private final UserRepository userRepository;
         private final AuditLogRepository auditLogRepository;
         private final TransactionReconciliationService transactionReconciliationService;
+        private final FinancialResourceOwnershipService financialResourceOwnershipService;
 
-        public UpdateTransactionUseCase(TransactionRepository transactionRepository, UserRepository userRepository,
+        public UpdateTransactionUseCase(TransactionRepository transactionRepository,
                         AuditLogRepository auditLogRepository,
-                        TransactionReconciliationService transactionReconciliationService) {
+                        TransactionReconciliationService transactionReconciliationService,
+                        FinancialResourceOwnershipService financialResourceOwnershipService) {
                 this.transactionRepository = transactionRepository;
-                this.userRepository = userRepository;
                 this.auditLogRepository = auditLogRepository;
                 this.transactionReconciliationService = transactionReconciliationService;
+                this.financialResourceOwnershipService = financialResourceOwnershipService;
         }
 
         @Transactional
@@ -44,14 +43,23 @@ public class UpdateTransactionUseCase {
                         BigDecimal amount, String description, LocalDateTime date, TransactionType type) {
                 Transaction sourceTransaction = transactionRepository.findById(UUID.fromString(transactionId))
                                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
-                User user = userRepository.findById(UUID.fromString(userId))
-                                .orElseThrow(() -> new UserNotFoundException("User not found"));
-                if (!user.getId().equals(sourceTransaction.getUserId())) {
+                UUID parsedUserId = financialResourceOwnershipService.requireExistingUser(userId);
+                if (!parsedUserId.equals(sourceTransaction.getUserId())) {
                         throw new UnauthorizedException("User not authorized to access this transaction");
                 }
+                financialResourceOwnershipService.requireOwnedCategory(parsedUserId, categoryId);
+                financialResourceOwnershipService.requireOwnedAccount(parsedUserId, sourceAccountId,
+                                "Source account not found");
+                if (type == TransactionType.TRANSFER) {
+                        financialResourceOwnershipService.requireOwnedAccount(parsedUserId, destinationAccountId,
+                                        "Destination account not found");
+                }
+
                 var updatedTransaction = new Transaction(sourceTransaction.getId(), sourceTransaction.getUserId(),
                                 UUID.fromString(categoryId), UUID.fromString(sourceAccountId),
-                                UUID.fromString(destinationAccountId),
+                                type == TransactionType.TRANSFER && destinationAccountId != null
+                                                ? UUID.fromString(destinationAccountId)
+                                                : null,
                                 amount, description, date, type, sourceTransaction.getSyncStatus(),
                                 sourceTransaction.getCreatedAt());
                 updatedTransaction.validate();

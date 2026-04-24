@@ -24,10 +24,19 @@ public class TransactionMapper {
     }
 
     public TransactionEntity toEntity(Transaction domain) {
+        return toEntity(domain, null, null, null, null);
+    }
+
+    public TransactionEntity toEntity(Transaction domain, UserEntity userEntity, CategoryEntity categoryEntity,
+            AccountEntity sourceAccountEntity, AccountEntity destinationAccountEntity) {
         if (domain == null)
             return null;
         TransactionEntity entity = new TransactionEntity();
         entity.setId(domain.getId());
+        entity.setUser(userEntity);
+        entity.setCategory(categoryEntity);
+        entity.setSourceAccount(sourceAccountEntity);
+        entity.setDestinationAccount(destinationAccountEntity);
         entity.setAmount(domain.getAmount());
         entity.setDescription(domain.getDescription());
         entity.setDate(domain.getDate());
