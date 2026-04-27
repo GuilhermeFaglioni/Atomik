@@ -5,21 +5,15 @@ import java.time.LocalDateTime;
 
 import com.atomik.atomik_api.domain.model.TransactionType;
 
-public record UpdateTransactionRequestDTO(String categoryId, String sourceAccountId,
-        String destinationAccountId, BigDecimal amount, String description, String date, String type) {
-    public TransactionType getType() {
-        try {
-            return TransactionType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid transaction type: " + type);
-        }
-    }
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-    public LocalDateTime getDate() {
-        try {
-            return LocalDateTime.parse(date);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid date: " + date);
-        }
-    }
+public record UpdateTransactionRequestDTO(
+        @NotBlank(message = "Category ID is required") String categoryId,
+        @NotBlank(message = "Source account ID is required") String sourceAccountId,
+        String destinationAccountId,
+        @NotNull(message = "Amount is required") BigDecimal amount,
+        @NotBlank(message = "Description is required") String description,
+        @NotNull(message = "Date is required") LocalDateTime date,
+        @NotNull(message = "Type is required") TransactionType type) {
 }

@@ -29,14 +29,14 @@ public class DatabaseRecurringTransactionRepositoryAdapter implements RecurringT
 
     @Override
     public List<RecurringTransaction> findByUserId(UUID userId) {
-        return jpaRecurringTransactionRepository.findByUserId(userId).stream()
+        return jpaRecurringTransactionRepository.findByUser_Id(userId).stream()
                 .map(recurringTransactionMapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<RecurringTransaction> findActiveByUserId(UUID userId) {
-        return jpaRecurringTransactionRepository.findByUserIdAndStatus(userId, RecurringStatus.ACTIVE).stream()
+        return jpaRecurringTransactionRepository.findByUser_IdAndStatus(userId, RecurringStatus.ACTIVE).stream()
                 .map(recurringTransactionMapper::toDomain)
                 .toList();
     }
@@ -44,7 +44,7 @@ public class DatabaseRecurringTransactionRepositoryAdapter implements RecurringT
     @Override
     public List<RecurringTransaction> findActiveByUserIdAndNextDueDateBefore(UUID userId, LocalDateTime date) {
         return jpaRecurringTransactionRepository
-                .findByUserIdAndStatusAndNextDueDateBefore(userId, RecurringStatus.ACTIVE, date).stream()
+                .findByUser_IdAndStatusAndNextDueDateBefore(userId, RecurringStatus.ACTIVE, date).stream()
                 .map(recurringTransactionMapper::toDomain)
                 .toList();
     }

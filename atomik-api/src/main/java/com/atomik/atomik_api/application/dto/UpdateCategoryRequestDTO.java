@@ -7,5 +7,5 @@ public record UpdateCategoryRequestDTO(
         @NotBlank(message = "Name is required") String name,
         @NotBlank(message = "Icon is required") String icon,
         @NotBlank(message = "Color is required") String color,
-        @NotNull(message = "isDefault is required") boolean isDefault) {
+        @NotNull(message = "isDefault is required") Boolean isDefault) {
 }

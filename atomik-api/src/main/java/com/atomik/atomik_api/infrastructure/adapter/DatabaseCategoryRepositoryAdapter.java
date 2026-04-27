@@ -10,15 +10,19 @@ import com.atomik.atomik_api.domain.model.Category;
 import com.atomik.atomik_api.domain.repository.CategoryRepository;
 import com.atomik.atomik_api.infrastructure.persistence.CategoryMapper;
 import com.atomik.atomik_api.infrastructure.persistence.JpaCategoryRepository;
+import com.atomik.atomik_api.infrastructure.persistence.JpaUserRepository;
 
 @Component
 public class DatabaseCategoryRepositoryAdapter implements CategoryRepository {
     private final JpaCategoryRepository jpaCategoryRepository;
+    private final JpaUserRepository jpaUserRepository;
     private final CategoryMapper categoryMapper;
 
     public DatabaseCategoryRepositoryAdapter(JpaCategoryRepository jpaCategoryRepository,
+            JpaUserRepository jpaUserRepository,
             CategoryMapper categoryMapper) {
         this.jpaCategoryRepository = jpaCategoryRepository;
+        this.jpaUserRepository = jpaUserRepository;
         this.categoryMapper = categoryMapper;
     }
 
@@ -34,14 +38,14 @@ public class DatabaseCategoryRepositoryAdapter implements CategoryRepository {
 
     @Override
     public Category save(Category category) {
-        var entity = categoryMapper.toEntity(category);
+        var userRef = jpaUserRepository.getReferenceById(category.getUserId());
+        var entity = categoryMapper.toEntity(category, userRef);
         return categoryMapper.toDomain(jpaCategoryRepository.save(entity));
     }
 
     @Override
     public void delete(Category category) {
-        var entity = categoryMapper.toEntity(category);
-        jpaCategoryRepository.delete(entity);
+        jpaCategoryRepository.deleteById(category.getId());
     }
 
     @Override
@@ -50,6 +54,7 @@ public class DatabaseCategoryRepositoryAdapter implements CategoryRepository {
             existingEntity.setName(category.getName());
             existingEntity.setIcon(category.getIcon());
             existingEntity.setColor(category.getColor());
+            existingEntity.setIsDefault(category.getIsDefault());
             return categoryMapper.toDomain(jpaCategoryRepository.save(existingEntity));
         });
     }

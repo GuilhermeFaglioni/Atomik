@@ -23,6 +23,8 @@ import com.atomik.atomik_api.application.usecases.ListUserCategoriesUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateCategoryUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -46,7 +48,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryRequestDTO request,
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody @Valid CreateCategoryRequestDTO request,
             Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createCategoryUseCase.execute(authenticatedUserId, request.name(), request.icon(),
@@ -64,7 +66,7 @@ public class CategoryController {
 
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable String userId, @PathVariable String id,
-            @RequestBody UpdateCategoryRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid UpdateCategoryRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
         var response = updateCategoryUseCase.execute(authenticatedUserId, id, request.name(), request.icon(),
                 request.color(), request.isDefault());

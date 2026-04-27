@@ -12,6 +12,8 @@ import com.atomik.atomik_api.application.dto.SyncResponseDTO;
 import com.atomik.atomik_api.application.usecases.SyncTransactionsUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/sync")
 public class SyncStatusController {
@@ -25,7 +27,7 @@ public class SyncStatusController {
     }
 
     @PostMapping
-    public ResponseEntity<SyncResponseDTO> sync(@RequestBody SyncRequestDTO request, Authentication authentication) {
+    public ResponseEntity<SyncResponseDTO> sync(@RequestBody @Valid SyncRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         SyncRequestDTO sanitizedRequest = new SyncRequestDTO(authenticatedUserId, request.transactions());
         SyncResponseDTO response = syncTransactionsUseCase.execute(sanitizedRequest);

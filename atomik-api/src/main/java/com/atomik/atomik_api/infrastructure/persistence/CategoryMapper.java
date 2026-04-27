@@ -14,17 +14,23 @@ public class CategoryMapper {
                 entity.getName(),
                 entity.getIcon(),
                 entity.getColor(),
-                false // isDefault not in entity
+                entity.getIsDefault()
         );
     }
 
     public CategoryEntity toEntity(Category domain) {
+        return toEntity(domain, null);
+    }
+
+    public CategoryEntity toEntity(Category domain, UserEntity userEntity) {
         if (domain == null) return null;
         CategoryEntity entity = new CategoryEntity();
         entity.setId(domain.getId());
+        entity.setUser(userEntity);
         entity.setName(domain.getName());
         entity.setIcon(domain.getIcon());
         entity.setColor(domain.getColor());
+        entity.setIsDefault(domain.getIsDefault());
         return entity;
     }
 }

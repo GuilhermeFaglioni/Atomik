@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/migrations/003-add-name-to-budget.yml
   - include:
       file: db/changelog/migrations/004-add-recurring-transactions.yml
+  - include:
+      file: db/changelog/migrations/005-align-persistence-schema.yml

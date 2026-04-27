@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,7 +21,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "accounts", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_accounts_user_name", columnNames = { "user_id", "name" })
+})
 @EntityListeners(AuditingEntityListener.class)
 public class AccountEntity {
     @Id
@@ -31,7 +34,7 @@ public class AccountEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)

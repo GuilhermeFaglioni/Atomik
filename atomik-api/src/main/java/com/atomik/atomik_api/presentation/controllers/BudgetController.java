@@ -19,6 +19,8 @@ import com.atomik.atomik_api.application.usecases.ListUserBudgetsUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateBudgetUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +48,7 @@ public class BudgetController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BudgetResponseDTO> createBudget(@RequestBody CreateBudgetRequestDTO request,
+    public ResponseEntity<BudgetResponseDTO> createBudget(@RequestBody @Valid CreateBudgetRequestDTO request,
             Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createBudgetUseCase.execute(authenticatedUserId, request.categoryId(), request.limitAmount(),
@@ -64,7 +66,7 @@ public class BudgetController {
 
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<BudgetResponseDTO> updateBudget(@PathVariable String userId, @PathVariable String id,
-            @RequestBody UpdateBudgetRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid UpdateBudgetRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
         var response = updateBudgetUseCase.execute(authenticatedUserId, id, request.categoryId(), request.name(),
                 request.limitAmount(), request.month(), request.year());

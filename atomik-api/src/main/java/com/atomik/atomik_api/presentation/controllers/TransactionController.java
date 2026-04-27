@@ -26,6 +26,8 @@ import com.atomik.atomik_api.application.usecases.ListUserTransactionUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateTransactionUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -53,7 +55,7 @@ public class TransactionController {
 
     @PostMapping("/unique")
     public ResponseEntity<TransactionCreatedResponse> createUniqueTransaction(
-            @RequestBody CreateUniqueTransactionRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid CreateUniqueTransactionRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createUniqueTransactionUseCase.execute(authenticatedUserId, request.categoryId(),
                 request.accountId(),
@@ -62,7 +64,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionCreatedResponse> createTransfer(@RequestBody CreateTransferRequestDTO request,
+    public ResponseEntity<TransactionCreatedResponse> createTransfer(@RequestBody @Valid CreateTransferRequestDTO request,
             Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createTransferUseCase.execute(authenticatedUserId, request.categoryId(),
@@ -82,12 +84,12 @@ public class TransactionController {
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<TransactionResponseDTO> updateTransaction(@PathVariable String userId,
             @PathVariable String id,
-            @RequestBody UpdateTransactionRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid UpdateTransactionRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
         var response = updateTransactionUseCase.execute(id, authenticatedUserId, request.categoryId(),
                 request.sourceAccountId(), request.destinationAccountId(), request.amount(), request.description(),
-                request.getDate(),
-                request.getType());
+                request.date(),
+                request.type());
         return ResponseEntity.status(200).body(response);
     }
 

@@ -34,15 +34,19 @@ public class CategoryEntity {
     @Column(name = "color", nullable = false)
     private String color;
 
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault;
+
     protected CategoryEntity() {
     }
 
-    public CategoryEntity(UUID id, UserEntity user, String name, String icon, String color) {
+    public CategoryEntity(UUID id, UserEntity user, String name, String icon, String color, Boolean isDefault) {
         this.id = id;
         this.user = user;
         this.name = name;
         this.icon = icon;
         this.color = color;
+        this.isDefault = isDefault;
     }
 
     public UUID getId() { return id; }
@@ -59,6 +63,9 @@ public class CategoryEntity {
 
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }
+
+    public Boolean getIsDefault() { return isDefault; }
+    public void setIsDefault(Boolean isDefault) { this.isDefault = isDefault; }
 
     public UUID getUserId() {
         return user != null ? user.getId() : null;

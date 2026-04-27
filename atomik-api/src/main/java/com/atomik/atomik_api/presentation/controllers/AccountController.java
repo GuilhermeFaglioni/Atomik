@@ -24,6 +24,8 @@ import com.atomik.atomik_api.application.usecases.ListAccountsUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateAccountUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
@@ -46,7 +48,7 @@ public class AccountController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AccountCreatedResponse> createAccount(@RequestBody CreateAccountRequestDTO request,
+    public ResponseEntity<AccountCreatedResponse> createAccount(@RequestBody @Valid CreateAccountRequestDTO request,
             Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createAccountUseCase.execute(authenticatedUserId, request.name(), request.getType(),
@@ -78,7 +80,7 @@ public class AccountController {
 
     @PutMapping("/{userId}/{id}")
     public ResponseEntity<AccountResponse> updateAccount(@PathVariable String userId, @PathVariable String id,
-            @RequestBody UpdateAccountRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid UpdateAccountRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
         var response = updateAccountUseCase.execute(authenticatedUserId, id, request.name(), request.currency(),
                 request.getType());

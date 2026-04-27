@@ -3,6 +3,8 @@ package com.atomik.atomik_api.application.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record SyncTransactionItemDTO(
         String id,
         String categoryId,
@@ -12,6 +14,6 @@ public record SyncTransactionItemDTO(
         String description,
         LocalDateTime date,
         String type,
-        String operationType) {
+        @NotBlank(message = "Operation type is required") String operationType) {
 
 }

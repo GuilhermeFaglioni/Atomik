@@ -17,6 +17,8 @@ import com.atomik.atomik_api.application.usecases.GetUserUseCase;
 import com.atomik.atomik_api.application.usecases.UpdateUserUseCase;
 import com.atomik.atomik_api.presentation.security.AuthenticatedUserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -42,7 +44,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String id,
-            @RequestBody UpdateUserRequestDTO request, Authentication authentication) {
+            @RequestBody @Valid UpdateUserRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, id);
         var response = updateUserUseCase.execute(authenticatedUserId, request.name(), request.email(),
                 request.preferredCurrency());

@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-01-add-account-user-name-unique-constraint
+      author: codex
+      changes:
+        - addUniqueConstraint:
+            tableName: accounts
+            columnNames: user_id, name
+            constraintName: uk_accounts_user_name

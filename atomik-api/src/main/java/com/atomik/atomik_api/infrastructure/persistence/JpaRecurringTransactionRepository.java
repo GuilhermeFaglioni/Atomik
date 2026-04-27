@@ -11,11 +11,11 @@ import com.atomik.atomik_api.domain.model.RecurringStatus;
 
 @Repository
 public interface JpaRecurringTransactionRepository extends JpaRepository<RecurringTransactionEntity, UUID> {
-    List<RecurringTransactionEntity> findByUserId(UUID userId);
+    List<RecurringTransactionEntity> findByUser_Id(UUID userId);
 
-    List<RecurringTransactionEntity> findByUserIdAndStatus(UUID userId, RecurringStatus status);
+    List<RecurringTransactionEntity> findByUser_IdAndStatus(UUID userId, RecurringStatus status);
 
-    List<RecurringTransactionEntity> findByUserIdAndStatusAndNextDueDateBefore(
+    List<RecurringTransactionEntity> findByUser_IdAndStatusAndNextDueDateBefore(
             UUID userId,
             RecurringStatus status,
             LocalDateTime date);

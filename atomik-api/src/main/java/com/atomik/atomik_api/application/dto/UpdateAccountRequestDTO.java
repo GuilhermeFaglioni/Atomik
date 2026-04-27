@@ -2,7 +2,12 @@ package com.atomik.atomik_api.application.dto;
 
 import com.atomik.atomik_api.domain.model.AccountType;
 
-public record UpdateAccountRequestDTO(String name, String currency, String type) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UpdateAccountRequestDTO(
+        @NotBlank(message = "Name is required") String name,
+        @NotBlank(message = "Currency is required") String currency,
+        @NotBlank(message = "Type is required") String type) {
     public AccountType getType() {
         try {
             return AccountType.valueOf(type);

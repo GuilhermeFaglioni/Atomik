@@ -28,7 +28,7 @@ public class AccountRepositoryAdapter implements AccountRepository {
 
     @Override
     public List<Account> findByUserId(UUID userId) {
-        List<AccountEntity> entities = jpaAccountRepository.findByUserId(userId);
+        List<AccountEntity> entities = jpaAccountRepository.findByUser_Id(userId);
         return entities.stream().map(mapper::toDomain).toList();
     }
 
@@ -63,6 +63,6 @@ public class AccountRepositoryAdapter implements AccountRepository {
 
     @Override
     public boolean existsByNameAndUserId(String name, UUID userId) {
-        return jpaAccountRepository.existsByNameAndUserId(name, userId);
+        return jpaAccountRepository.existsByNameAndUser_Id(name, userId);
     }
 }
