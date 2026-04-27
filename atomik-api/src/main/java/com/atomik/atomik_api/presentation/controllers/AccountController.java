@@ -51,7 +51,7 @@ public class AccountController {
     public ResponseEntity<AccountCreatedResponse> createAccount(@RequestBody @Valid CreateAccountRequestDTO request,
             Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
-        var response = createAccountUseCase.execute(authenticatedUserId, request.name(), request.getType(),
+        var response = createAccountUseCase.execute(authenticatedUserId, request.name(), request.type(),
                 request.currency());
         return ResponseEntity.status(201).body(response);
     }
@@ -83,7 +83,7 @@ public class AccountController {
             @RequestBody @Valid UpdateAccountRequestDTO request, Authentication authentication) {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, userId);
         var response = updateAccountUseCase.execute(authenticatedUserId, id, request.name(), request.currency(),
-                request.getType());
+                request.type());
         return ResponseEntity.status(200).body(response);
     }
 }

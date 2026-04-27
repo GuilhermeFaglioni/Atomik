@@ -2,6 +2,8 @@ package com.atomik.atomik_api.presentation.advice;
 
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +27,8 @@ import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler({
             UserNotFoundException.class,
             AccountNotFoundException.class,
@@ -69,6 +73,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessageDTO> handleUnexpectedException(Exception ex) {
+        LOGGER.error("Unhandled server error", ex);
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
     private ResponseEntity<ErrorMessageDTO> buildError(HttpStatus status, String message) {

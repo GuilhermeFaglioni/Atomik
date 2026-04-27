@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.atomik.atomik_api.application.dto.RecurringResponseDTO;
-import com.atomik.atomik_api.domain.exception.RecurringTransactionNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.RecurringTransaction;
 import com.atomik.atomik_api.domain.repository.RecurringTransactionRepository;
@@ -26,10 +25,6 @@ public class GetRecurringTransactionsByUserUseCase {
     public List<RecurringResponseDTO> execute(String userId) {
         userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException("User not found"));
         var recurringTransactions = recurringTransactionRepository.findByUserId(UUID.fromString(userId));
-
-        if (recurringTransactions.isEmpty()) {
-            throw new RecurringTransactionNotFoundException("Recurring transaction not found");
-        }
 
         return recurringTransactions.stream().map(this::toResponse).toList();
     }

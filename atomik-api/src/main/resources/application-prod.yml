@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    com.atomik.atomik_api: INFO
+    org.hibernate.SQL: WARN

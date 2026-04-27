@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.atomik.atomik_api.application.dto.CategoryResponseDTO;
-import com.atomik.atomik_api.domain.exception.CategoryNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.Category;
 import com.atomik.atomik_api.domain.repository.CategoryRepository;
@@ -26,10 +25,6 @@ public class ListUserCategoriesUseCase {
         userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         var categories = categoryRepository.findAllByUserId(UUID.fromString(userId));
-
-        if (categories.isEmpty()) {
-            throw new CategoryNotFoundException("Categories not found");
-        }
 
         return categories.stream().map(this::toResponse).toList();
     }

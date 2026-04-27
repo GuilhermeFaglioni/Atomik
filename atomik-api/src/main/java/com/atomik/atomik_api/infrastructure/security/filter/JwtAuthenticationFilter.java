@@ -28,8 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         var token = this.recoverToken(request);
         if (token != null && tokenService.validateToken(token)) {
-            var email = tokenService.extractSubject(token);
-            var authentication = new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+            var authenticatedUserId = tokenService.extractSubject(token);
+            var authentication = new UsernamePasswordAuthenticationToken(authenticatedUserId, null,
+                    Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

@@ -20,13 +20,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
+import com.atomik.atomik_api.application.service.TransactionAuditService;
 import com.atomik.atomik_api.domain.model.Account;
 import com.atomik.atomik_api.domain.model.AccountType;
 import com.atomik.atomik_api.domain.model.Category;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
-import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
-import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationImpService;
+import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class CreateTransferUseCaseTest {
@@ -35,13 +35,13 @@ class CreateTransferUseCaseTest {
     private TransactionRepository transactionRepository;
 
     @Mock
-    private AuditLogRepository auditLogRepository;
-
-    @Mock
     private FinancialResourceOwnershipService financialResourceOwnershipService;
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private TransactionAuditService transactionAuditService;
 
     private CreateTransferUseCase createTransferUseCase;
 
@@ -49,9 +49,9 @@ class CreateTransferUseCaseTest {
     void setUp() {
         createTransferUseCase = new CreateTransferUseCase(
                 transactionRepository,
-                auditLogRepository,
                 financialResourceOwnershipService,
-                new TransactionReconciliationImpService(accountRepository));
+                new TransactionReconciliationServiceImpl(accountRepository),
+                transactionAuditService);
     }
 
     @Test

@@ -1,8 +1,27 @@
-# 📝 Especificação Técnica: Atomik (Project Spec)
+# Especificacao Tecnica: Atomik (Project Spec)
 
-**Status:** Draft (Versão Inicial)
-**Versão:** 1.0.0  
+**Status:** Target product spec; nao representa baseline 1:1 do backend atual
+**Versão:** 1.1.0  
 **Autor:** Guilherme Faglioni
+
+---
+
+## 0. Leitura Correta Deste Documento
+
+Este arquivo descreve produto-alvo.
+
+Estado real do repo em `2026-04-27`:
+
+- Backend Spring Boot existe e cobre auth, usuarios, contas, categorias, orcamentos, transacoes, auditoria e sync
+- Frontend React/PWA ainda nao existe neste repositorio
+- Filas/background jobs ainda nao existem como implementacao operacional
+- Relatorios PDF/CSV e dashboard analitico ainda estao planejados
+
+Fonte de verdade para estado tecnico atual:
+
+- `README.md`
+- `REPO_ANALYSIS.md`
+- `ATOMIK_API_PLAN.md`
 
 ---
 
@@ -69,6 +88,8 @@ O **Atomik** é um motor de inteligência financeira focado em integridade banc�
 4. A interface reflete o novo saldo (Optimistic UI).
 5. Quando o sinal retorna, o Service Worker envia o registro para o Java.
 6. O Java processa, salva no Postgres e o status muda para `status: SYNCED`.
+
+> Observacao: fluxo acima ainda e objetivo de produto. Cliente offline/PWA nao esta implementado neste repo hoje.
 
 ---
 

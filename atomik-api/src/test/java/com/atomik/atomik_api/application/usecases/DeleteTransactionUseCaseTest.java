@@ -18,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.atomik.atomik_api.application.service.TransactionAuditService;
 import com.atomik.atomik_api.domain.model.Account;
 import com.atomik.atomik_api.domain.model.AccountType;
 import com.atomik.atomik_api.domain.model.SyncStatusType;
@@ -25,10 +26,9 @@ import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
 import com.atomik.atomik_api.domain.model.User;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
-import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
-import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationImpService;
+import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteTransactionUseCaseTest {
@@ -40,10 +40,10 @@ class DeleteTransactionUseCaseTest {
     private UserRepository userRepository;
 
     @Mock
-    private AuditLogRepository auditLogRepository;
+    private AccountRepository accountRepository;
 
     @Mock
-    private AccountRepository accountRepository;
+    private TransactionAuditService transactionAuditService;
 
     private DeleteTransactionUseCase deleteTransactionUseCase;
 
@@ -52,8 +52,8 @@ class DeleteTransactionUseCaseTest {
         deleteTransactionUseCase = new DeleteTransactionUseCase(
                 transactionRepository,
                 userRepository,
-                new TransactionReconciliationImpService(accountRepository),
-                auditLogRepository);
+                new TransactionReconciliationServiceImpl(accountRepository),
+                transactionAuditService);
     }
 
     @Test

@@ -15,8 +15,5 @@ public record CreateUniqueTransactionRequestDTO(
         @NotBlank(message = "Description is required") String description,
         @NotNull(message = "Amount is required") BigDecimal amount,
         @NotNull(message = "Date is required") LocalDateTime date,
-        @NotBlank(message = "Type is required") String type) {
-    public TransactionType getType() {
-        return TransactionType.valueOf(type);
-    }
+        @NotNull(message = "Type is required") TransactionType type) {
 }

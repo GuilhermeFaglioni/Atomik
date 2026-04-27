@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.atomik.atomik_api.application.dto.DeleteAccounteResponse;
+import com.atomik.atomik_api.application.dto.DeleteAccountResponse;
 import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
@@ -22,7 +22,7 @@ public class DeleteAccountUseCase {
         this.userRepository = userRepository;
     }
 
-    public DeleteAccounteResponse execute(String userId, String accountId) {
+    public DeleteAccountResponse execute(String userId, String accountId) {
         userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -35,6 +35,6 @@ public class DeleteAccountUseCase {
 
         accountRepository.delete(account);
 
-        return new DeleteAccounteResponse(accountId, "Account deleted successfully");
+        return new DeleteAccountResponse(accountId, "Account deleted successfully");
     }
 }

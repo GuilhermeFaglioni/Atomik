@@ -10,10 +10,10 @@ import com.atomik.atomik_api.domain.repository.AccountRepository;
 import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
-public class TransactionReconciliationImpService implements TransactionReconciliationService {
+public class TransactionReconciliationServiceImpl implements TransactionReconciliationService {
     private final AccountRepository accountRepository;
 
-    public TransactionReconciliationImpService(AccountRepository accountRepository) {
+    public TransactionReconciliationServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 

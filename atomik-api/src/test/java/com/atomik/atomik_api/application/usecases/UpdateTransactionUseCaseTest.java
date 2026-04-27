@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
+import com.atomik.atomik_api.application.service.TransactionAuditService;
 import com.atomik.atomik_api.domain.model.Account;
 import com.atomik.atomik_api.domain.model.AccountType;
 import com.atomik.atomik_api.domain.model.Category;
@@ -29,9 +30,8 @@ import com.atomik.atomik_api.domain.model.SyncStatusType;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
 import com.atomik.atomik_api.domain.repository.AccountRepository;
-import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
-import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationImpService;
+import com.atomik.atomik_api.infrastructure.service.TransactionReconciliationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateTransactionUseCaseTest {
@@ -40,13 +40,13 @@ class UpdateTransactionUseCaseTest {
     private TransactionRepository transactionRepository;
 
     @Mock
-    private AuditLogRepository auditLogRepository;
-
-    @Mock
     private FinancialResourceOwnershipService financialResourceOwnershipService;
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private TransactionAuditService transactionAuditService;
 
     private UpdateTransactionUseCase updateTransactionUseCase;
 
@@ -54,9 +54,9 @@ class UpdateTransactionUseCaseTest {
     void setUp() {
         updateTransactionUseCase = new UpdateTransactionUseCase(
                 transactionRepository,
-                auditLogRepository,
-                new TransactionReconciliationImpService(accountRepository),
-                financialResourceOwnershipService);
+                new TransactionReconciliationServiceImpl(accountRepository),
+                financialResourceOwnershipService,
+                transactionAuditService);
     }
 
     @Test

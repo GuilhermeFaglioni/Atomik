@@ -8,29 +8,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
+import com.atomik.atomik_api.application.service.TransactionAuditService;
 import com.atomik.atomik_api.application.dto.TransactionCreatedResponse;
-import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
-import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
 public class CreateUniqueTransactionUseCase {
     private final TransactionRepository transactionRepository;
-    private final AuditLogRepository auditLogRepository;
     private final FinancialResourceOwnershipService financialResourceOwnershipService;
     private final TransactionReconciliationService transactionReconciliationService;
+    private final TransactionAuditService transactionAuditService;
 
     public CreateUniqueTransactionUseCase(TransactionRepository transactionRepository,
-            AuditLogRepository auditLogRepository,
             FinancialResourceOwnershipService financialResourceOwnershipService,
-            TransactionReconciliationService transactionReconciliationService) {
+            TransactionReconciliationService transactionReconciliationService,
+            TransactionAuditService transactionAuditService) {
         this.transactionRepository = transactionRepository;
-        this.auditLogRepository = auditLogRepository;
         this.financialResourceOwnershipService = financialResourceOwnershipService;
         this.transactionReconciliationService = transactionReconciliationService;
+        this.transactionAuditService = transactionAuditService;
     }
 
     @Transactional
@@ -52,9 +51,7 @@ public class CreateUniqueTransactionUseCase {
                 UUID.fromString(accountId), amount, description, date, type);
 
         transactionReconciliationService.apply(transaction);
-        AuditLog auditLog = AuditLog.createNewAuditLog(transaction.getId(), "New Unique Transaction", "N/A",
-                transaction.getAmount().toString());
-        auditLogRepository.save(auditLog);
+        transactionAuditService.logCreated(transaction, "New Unique Transaction");
         transactionRepository.save(transaction);
         return toResponse(transaction);
 

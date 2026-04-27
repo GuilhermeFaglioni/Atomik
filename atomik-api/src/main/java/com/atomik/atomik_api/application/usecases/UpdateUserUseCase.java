@@ -18,10 +18,10 @@ public class UpdateUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public UserResponseDTO execute(String userId, String name, String email, String prefferedCurrency) {
+    public UserResponseDTO execute(String userId, String name, String email, String preferredCurrency) {
         User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        var updatedUser = new User(user.getId(), name, new Email(email), user.getPasswordHash(), prefferedCurrency,
+        var updatedUser = new User(user.getId(), name, new Email(email), user.getPasswordHash(), preferredCurrency,
                 user.getCreatedAt());
         updatedUser.validate();
         var savedUser = userRepository.update(updatedUser)

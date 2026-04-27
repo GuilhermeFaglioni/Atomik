@@ -12,15 +12,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.atomik.atomik_api.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.atomik.atomik_api.infrastructure.web.RequestCorrelationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RequestCorrelationFilter requestCorrelationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+            RequestCorrelationFilter requestCorrelationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.requestCorrelationFilter = requestCorrelationFilter;
     }
 
     @Bean
@@ -34,6 +38,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated())
+                .addFilterBefore(requestCorrelationFilter, JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

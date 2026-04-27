@@ -8,6 +8,26 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Adicionado (Performance, Observabilidade e Documentacao Real)
+
+- **Profiles de runtime:** `application-dev.yml`, `application-test.yml`, `application-prod.yml`.
+- **Correlacao de requisicao:** novo `RequestCorrelationFilter` com header/log `X-Request-Id`.
+- **Contrato operacional:** `.env.example` no modulo `atomik-api`.
+- **ADR 003:** decisao de perfis de runtime e observabilidade minima.
+
+### Alterado
+
+- **application.yml:** remove `show-sql` global; logging agora depende de profile.
+- **List queries:** budgets, categories, audit logs e recurring transactions passam a retornar lista vazia em vez de usar excecao para fluxo normal.
+- **ListUserTransactionUseCase:** remove validacao baseada em primeiro item da lista; consulta ja responde por `userId`.
+- **README:** reescrito para refletir escopo real do repositorio.
+- **project-spec:** marcado explicitamente como especificacao alvo, nao como baseline entregue.
+
+### Corrigido
+
+- **Test runtime:** testes Spring agora sobem com profile `test`, reduzindo ruido de log/SQL.
+- **Unhandled errors:** `GlobalExceptionHandler` agora registra erro inesperado e devolve `500` padronizado.
+
 ### Adicionado (Clean Architecture & Auth System)
 
 #### 🏛️ Camada de Domínio (Domain)

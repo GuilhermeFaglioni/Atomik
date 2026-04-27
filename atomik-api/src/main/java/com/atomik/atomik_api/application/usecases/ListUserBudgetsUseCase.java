@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.atomik.atomik_api.application.dto.BudgetResponseDTO;
-import com.atomik.atomik_api.domain.exception.BudgetNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.Budget;
 import com.atomik.atomik_api.domain.repository.BudgetRepository;
@@ -26,12 +25,7 @@ public class ListUserBudgetsUseCase {
         userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException("User not found"));
         var budgets = budgetRepository.findAllByUserId(UUID.fromString(userId));
 
-        if (budgets.isEmpty()) {
-            throw new BudgetNotFoundException("Budgets not found");
-        }
-
         return budgets.stream().map(this::toResponseDTO).toList();
-
     }
 
     private BudgetResponseDTO toResponseDTO(Budget budget) {

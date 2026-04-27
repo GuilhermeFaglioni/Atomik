@@ -1,83 +1,143 @@
-# ⚛️ Atomik | Financial Intelligence Engine
+# Atomik
 
-**Atomik** é uma plataforma de gestão financeira de alta fidelidade, projetada para oferecer o rigor técnico de sistemas bancários com a agilidade de uma experiência nativa moderna. 
+`Atomik` hoje = backend Java em `atomik-api`.
 
-O projeto utiliza **Java 21** com **Clean Architecture** no backend para garantir integridade absoluta dos dados (ACID), e **React** no frontend com capacidades de **PWA (Progressive Web App)** para resiliência total em cenários offline.
+Estado real atual:
 
----
+- Implementado: API REST Spring Boot para auth, usuarios, contas, categorias, orcamentos, transacoes, auditoria e sync
+- Implementado: JWT, JPA, Liquibase, PostgreSQL, Redis em compose, Swagger, testes unitarios/web/integracao, CI Maven
+- Parcial: transacoes recorrentes existem no dominio/persistencia, mas controller ainda nao expoe fluxo completo
+- Planejado: frontend React/PWA, sync offline real no cliente, relatorios pesados, filas, dashboard analitico
 
-## 🚀 Diferenciais Técnicos 
+## Stack real
 
-* **Atomicidade & Integridade (RF-03):** Implementação do método de **Partidas Dobradas (Double-Entry Bookkeeping)**, garantindo que o dinheiro nunca "suma" entre contas através de transações atômicas.
-* **Resiliência Offline (RF-07):** Sincronização inteligente via **Service Workers** e **IndexedDB**, permitindo o uso completo do sistema sem conexão com a internet.
-* **Arquitetura Evolutiva (RNF-03):** Separação rigorosa entre regras de negócio e infraestrutura (Clean Architecture), facilitando a testabilidade e manutenção a longo prazo.
-* **Processamento Assíncrono (RNF-05):** Geração de relatórios pesados via filas de mensageria (**Redis**), mantendo a API sempre responsiva e performática.
+- Backend: Java 21+, Spring Boot 3.5.x
+- Seguranca: Spring Security + JWT
+- Persistencia: PostgreSQL + Spring Data JPA
+- Migrations: Liquibase
+- Cache/token store: Redis
+- Testes: JUnit 5, Mockito, Spring Test, H2
+- CI: GitHub Actions
 
----
+## Estrutura
 
-## 🛠️ Stack Tecnológica
+- `atomik-api/`: modulo backend Maven
+- `docs/`: ADRs, arquitetura, especificacao funcional alvo
+- `REPO_ANALYSIS.md`: diagnostico tecnico do repo
+- `ATOMIK_API_PLAN.md`: plano de refatoracao vivo
 
-### Backend (The Core)
-* **Linguagem:** Java 21 (LTS)
-* **Framework:** Spring Boot 3.x
-* **Segurança:** Spring Security + JWT (com Refresh Tokens)
-* **Persistência:** PostgreSQL + Spring Data JPA
-* **Migrations:** Liquibase (Versionamento de banco de dados)
-* **Documentação:** Swagger / OpenAPI 3
+## Funcionalidade hoje
 
-### Frontend (The Shell)
-* **Framework:** React + Vite
-* **Linguagem:** TypeScript
-* **Estado & Cache:** TanStack Query (React Query)
-* **PWA:** Workbox / Service Workers
-* **UI/UX:** Tailwind CSS + Radix UI + Shadcn/UI
-* **Charts:** Recharts
+### Existe
 
-### Infra & DevOps
-* **Containerização:** Docker & Docker Compose
-* **Mensageria/Cache:** Redis
-* **CI/CD:** GitHub Actions (Automated Testing & Linting)
+- registro/login com JWT
+- CRUD de usuarios
+- CRUD de contas
+- CRUD de categorias
+- CRUD de orcamentos
+- criacao/edicao/exclusao/listagem de transacoes
+- transferencias entre contas
+- auditoria de mudancas em transacoes
+- endpoint de sincronizacao
+- validacao de ownership via principal autenticado
+- profiles `dev`, `test`, `prod`
+- `X-Request-Id` em resposta e logs
 
----
+### Parcial
 
-## 🏛️ Arquitetura do Sistema
+- refresh token existe no modelo/contratos, mas fluxo operacional completo ainda nao esta fechado como feature de ponta a ponta
+- recorrencia existe em partes do core, sem exposicao completa e sem cobertura equivalente aos fluxos principais
 
-O **Atomik** segue os princípios da **Clean Architecture**, organizado em quatro camadas principais para garantir o desacoplamento:
+### Planejado
 
-1.  **Domain:** Entidades puras e regras de negócio essenciais (Independente de frameworks).
-2.  **Application:** Casos de Uso (Use Cases) que orquestram o fluxo de dados da aplicação.
-3.  **Infrastructure:** Implementações técnicas (Persistência JPA, Clientes de API, Configurações do Spring).
-4.  **Presentation/Web:** Controllers REST e DTOs para comunicação segura com o Frontend.
+- frontend React
+- PWA/offline client-side
+- jobs/background processing
+- relatorios PDF/CSV
+- dashboard analitico
 
----
+## Contrato operacional
 
-## 📋 Requisitos do Projeto
+### Profiles
 
-### Funcionais (RF)
-- [ ] **RF-01:** Gestão de múltiplas contas (Corrente, Dinheiro, Cartão).
-- [ ] **RF-02:** Registro de receitas, despesas e transferências.
-- [ ] **RF-03:** Lógica de partidas dobradas para transferências atômicas.
-- [ ] **RF-05:** Agendamento de transações recorrentes.
-- [ ] **RF-07:** Registro e sincronização offline via PWA.
-- [ ] **RF-08:** Geração assíncrona de relatórios financeiros (PDF/CSV).
+- `dev`: SQL visivel, logs da app em `DEBUG`
+- `test`: menos ruido, usado pela suite de testes
+- `prod`: SQL desligado, logs mais conservadores
 
-### Não Funcionais (RNF)
-- [ ] **RNF-01:** Persistência relacional com PostgreSQL (ACID).
-- [ ] **RNF-02:** Autenticação segura via JWT com Refresh Tokens.
-- [ ] **RNF-03:** Arquitetura Limpa com independência de frameworks.
-- [ ] **RNF-05:** Processamento em background jobs para tarefas pesadas.
+Ativar profile:
 
----
+```bash
+cd atomik-api
+SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
+```
 
-## 📖 Documentação Adicional
+### Variaveis de ambiente
 
-Para entender as decisões de design e a evolução do projeto, consulte:
-* [**Architecture Decision Records (ADRs)**](./docs/adr/) - Por que escolhemos cada tecnologia.
-* [**Especificação de Requisitos**](./docs/project-spec.md) - Detalhamento técnico do sistema.
-* [**Changelog**](./CHANGELOG.md) - Histórico de evolução e versões do Atomik.
+Arquivo exemplo: [`atomik-api/.env.example`](/Users/guilhermefaglioni/Documents/Development/Atomik/atomik-api/.env.example)
 
----
+Principais variaveis:
 
-## ⚙️ Como Executar o Projeto
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `REDIS_HOST`
+- `REDIS_PORT`
+- `JWT_SECRET`
+- `SPRING_PROFILES_ACTIVE`
 
-**Pré-requisitos:** Docker e Docker Compose instalados.
+### Stack local
+
+Subir dependencias:
+
+```bash
+docker compose up -d
+```
+
+Rodar API:
+
+```bash
+cd atomik-api
+./mvnw spring-boot:run
+```
+
+Swagger:
+
+- [Swagger UI](http://localhost:8080/swagger-ui.html)
+- [OpenAPI](http://localhost:8080/api-docs)
+
+### Banco e migracoes
+
+- Liquibase roda no bootstrap da aplicacao
+- `spring.jpa.hibernate.ddl-auto=validate`
+- schema fonte = `src/main/resources/db/changelog`
+
+## Testes e build
+
+Rodar testes:
+
+```bash
+cd atomik-api
+./mvnw test
+```
+
+Build local:
+
+```bash
+cd atomik-api
+./mvnw -q -DskipTests compile
+```
+
+## Documentacao
+
+- [Plano tecnico](/Users/guilhermefaglioni/Documents/Development/Atomik/ATOMIK_API_PLAN.md)
+- [Analise do repositorio](/Users/guilhermefaglioni/Documents/Development/Atomik/REPO_ANALYSIS.md)
+- [Especificacao funcional alvo](/Users/guilhermefaglioni/Documents/Development/Atomik/docs/project-spec.md)
+- [Arquitetura de dados](/Users/guilhermefaglioni/Documents/Development/Atomik/docs/architecture.md)
+- [ADR 001](/Users/guilhermefaglioni/Documents/Development/Atomik/docs/adr/001-escolha-da-arquitetura.md)
+- [ADR 002](/Users/guilhermefaglioni/Documents/Development/Atomik/docs/adr/002-uso-de-liquidbase.md)
+- [ADR 003](/Users/guilhermefaglioni/Documents/Development/Atomik/docs/adr/003-perfis-runtime-observabilidade.md)
+
+## Observacoes
+
+- Suite segue verde, mas H2 ainda loga warning de DDL em `budgets.month/year`
+- Docs em `docs/project-spec.md` descrevem produto alvo; nao tratam cada item como entregue

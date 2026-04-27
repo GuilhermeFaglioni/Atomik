@@ -253,11 +253,11 @@ Codigo menos fragil, menos repeticao, menos surpresa.
 
 ### Checklist de Entrega
 
-- [ ] Ownership extraido
-- [ ] Auditoria extraida
-- [ ] Aplicacao de saldo isolada
-- [ ] Typos corrigidos
-- [ ] DTOs viram transporte simples
+- [x] Ownership extraido
+- [x] Auditoria extraida
+- [x] Aplicacao de saldo isolada
+- [x] Typos corrigidos
+- [x] DTOs viram transporte simples
 
 ---
 
@@ -301,11 +301,11 @@ Recuperar confianca do projeto. Build verde. Testes cobrindo risco real.
 
 ### Checklist de Entrega
 
-- [ ] Java suportado documentado e padronizado
-- [ ] Mockito estabilizado
-- [ ] Piramide minima criada
-- [ ] Fluxos criticos cobertos
-- [ ] CI alinhado com runtime real
+- [x] Java suportado documentado e padronizado
+- [x] Mockito estabilizado
+- [x] Piramide minima criada
+- [x] Fluxos criticos cobertos
+- [x] CI alinhado com runtime real
 
 ---
 
@@ -390,10 +390,10 @@ Onboarding rapido, expectativa correta.
 
 ### Checklist de Entrega
 
-- [ ] README sincero
-- [ ] Planejado separado de implementado
-- [ ] ADR/spec atualizados
-- [ ] Setup operacional documentado
+- [x] README sincero
+- [x] Planejado separado de implementado
+- [x] ADR/spec atualizados
+- [x] Setup operacional documentado
 
 ---
 
@@ -451,7 +451,7 @@ Fluxo sugerido:
 - [x] Etapa 2 concluida
 - [x] Etapa 3 concluida
 - [x] Etapa 4 concluida
-- [ ] Etapa 5 concluida
-- [ ] Etapa 6 concluida
-- [ ] Etapa 7 concluida
-- [ ] Etapa 8 concluida
+- [x] Etapa 5 concluida
+- [x] Etapa 6 concluida
+- [x] Etapa 7 concluida
+- [x] Etapa 8 concluida

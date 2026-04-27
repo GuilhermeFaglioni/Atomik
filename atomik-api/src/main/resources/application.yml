@@ -1,7 +1,9 @@
 spring:
   application:
     name: atomik-api
-  
+  profiles:
+    default: dev
+
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/atomik_db}
     username: ${DB_USERNAME:atomik_user}
@@ -11,11 +13,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate  # O Hibernate apenas valida o banco (Segurança)
-    show-sql: true        # Mostra o SQL no console
     open-in-view: false   # Melhora a performance desativando o OSIV (Padrão Pleno)
-    properties:
-      "[hibernate.format_sql]": true
-      "[hibernate.highlight_sql]": true # Deixa o SQL colorido no terminal
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
@@ -32,6 +30,10 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+logging:
+  pattern:
+    level: "%5p [rid:%X{requestId:-na}]"
 
 api:
   security:

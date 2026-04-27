@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.atomik.atomik_api.application.dto.AuditLogResponseDTO;
-import com.atomik.atomik_api.domain.exception.AuditLogNotFoundException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.repository.AuditLogRepository;
@@ -26,12 +25,7 @@ public class ListAllUserAuditLogs {
         userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException("User not found"));
         var auditLogs = auditLogRepository.findByUserId(userId);
 
-        if (auditLogs.isEmpty()) {
-            throw new AuditLogNotFoundException("Audit logs not found");
-        }
-
         return auditLogs.stream().map(this::toResponseDTO).toList();
-
     }
 
     private AuditLogResponseDTO toResponseDTO(AuditLog auditLog) {

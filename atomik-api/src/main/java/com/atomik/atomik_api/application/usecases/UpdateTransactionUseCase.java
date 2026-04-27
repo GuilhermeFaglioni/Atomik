@@ -2,38 +2,36 @@ package com.atomik.atomik_api.application.usecases;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
+import com.atomik.atomik_api.application.service.TransactionAuditService;
 import com.atomik.atomik_api.application.dto.TransactionResponseDTO;
 import com.atomik.atomik_api.domain.exception.TransactionNotFoundException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
-import com.atomik.atomik_api.domain.model.AuditLog;
 import com.atomik.atomik_api.domain.model.Transaction;
 import com.atomik.atomik_api.domain.model.TransactionType;
-import com.atomik.atomik_api.domain.repository.AuditLogRepository;
 import com.atomik.atomik_api.domain.repository.TransactionRepository;
 import com.atomik.atomik_api.domain.service.TransactionReconciliationService;
 
 @Service
 public class UpdateTransactionUseCase {
         private final TransactionRepository transactionRepository;
-        private final AuditLogRepository auditLogRepository;
         private final TransactionReconciliationService transactionReconciliationService;
         private final FinancialResourceOwnershipService financialResourceOwnershipService;
+        private final TransactionAuditService transactionAuditService;
 
         public UpdateTransactionUseCase(TransactionRepository transactionRepository,
-                        AuditLogRepository auditLogRepository,
                         TransactionReconciliationService transactionReconciliationService,
-                        FinancialResourceOwnershipService financialResourceOwnershipService) {
+                        FinancialResourceOwnershipService financialResourceOwnershipService,
+                        TransactionAuditService transactionAuditService) {
                 this.transactionRepository = transactionRepository;
-                this.auditLogRepository = auditLogRepository;
                 this.transactionReconciliationService = transactionReconciliationService;
                 this.financialResourceOwnershipService = financialResourceOwnershipService;
+                this.transactionAuditService = transactionAuditService;
         }
 
         @Transactional
@@ -69,7 +67,7 @@ public class UpdateTransactionUseCase {
                 var savedTransaction = transactionRepository.update(updatedTransaction)
                                 .orElseThrow(() -> new RuntimeException("Error updating transaction"));
 
-                generateAuditLogs(sourceTransaction, updatedTransaction);
+                transactionAuditService.logChanges(sourceTransaction, updatedTransaction);
 
                 return toResponse(savedTransaction);
         }
@@ -78,27 +76,5 @@ public class UpdateTransactionUseCase {
                 return new TransactionResponseDTO(transaction.getId().toString(), transaction.getType().toString(),
                                 transaction.getAmount(), transaction.getDescription(),
                                 transaction.getDate().toString());
-        }
-
-        private void generateAuditLogs(Transaction oldS, Transaction newS) {
-                UUID entityId = newS.getId();
-                logIfChanged(entityId, "category_id", oldS.getCategoryId(), newS.getCategoryId());
-                logIfChanged(entityId, "source_account_id", oldS.getSourceAccountId(), newS.getSourceAccountId());
-                logIfChanged(entityId, "destination_account_id", oldS.getDestinationAccountId(),
-                                newS.getDestinationAccountId());
-                logIfChanged(entityId, "amount", oldS.getAmount(), newS.getAmount());
-                logIfChanged(entityId, "description", oldS.getDescription(), newS.getDescription());
-                logIfChanged(entityId, "date", oldS.getDate(), newS.getDate());
-                logIfChanged(entityId, "type", oldS.getType(), newS.getType());
-        }
-
-        private void logIfChanged(UUID entityId, String field, Object oldVal, Object newVal) {
-                if (!Objects.equals(oldVal, newVal)) {
-                        auditLogRepository.save(AuditLog.createNewAuditLog(
-                                        entityId,
-                                        field,
-                                        oldVal != null ? oldVal.toString() : "N/A",
-                                        newVal != null ? newVal.toString() : "N/A"));
-                }
         }
 }

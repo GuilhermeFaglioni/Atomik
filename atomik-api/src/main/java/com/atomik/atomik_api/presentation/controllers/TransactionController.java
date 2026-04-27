@@ -59,7 +59,7 @@ public class TransactionController {
         String authenticatedUserId = authenticatedUserService.requireCurrentUser(authentication, request.userId());
         var response = createUniqueTransactionUseCase.execute(authenticatedUserId, request.categoryId(),
                 request.accountId(),
-                request.amount(), request.description(), request.date(), request.getType());
+                request.amount(), request.description(), request.date(), request.type());
         return ResponseEntity.status(201).body(response);
     }
 
