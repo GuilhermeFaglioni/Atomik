@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.atomik.atomik_api.application.dto.AuthResponse;
 import com.atomik.atomik_api.application.dto.UserCreatedResponse;
 import com.atomik.atomik_api.application.usecases.AuthenticateUserUseCase;
+import com.atomik.atomik_api.application.usecases.LogoutUseCase;
+import com.atomik.atomik_api.application.usecases.RefreshAuthTokenUseCase;
 import com.atomik.atomik_api.application.usecases.RegisterUserUseCase;
 import com.atomik.atomik_api.domain.exception.EmailAlreadyExistsException;
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
@@ -35,6 +37,12 @@ class AuthControllerTest {
 
         @MockBean
         private RegisterUserUseCase registerUserUseCase;
+
+        @MockBean
+        private RefreshAuthTokenUseCase refreshAuthTokenUseCase;
+
+        @MockBean
+        private LogoutUseCase logoutUseCase;
 
         @MockBean
         private TokenService tokenService;
@@ -105,7 +113,7 @@ class AuthControllerTest {
         @Test
         @DisplayName("Should login successfully with 200 OK")
         void shouldLoginSuccessfully() throws Exception {
-                var response = new AuthResponse("access-token", "refresh-token", "Bearer", 3600L);
+                var response = new AuthResponse("access-token", "refresh-token", "Bearer", 7200L);
                 when(authenticateUserUseCase.execute(anyString(), anyString())).thenReturn(response);
 
                 String json = """
@@ -139,5 +147,40 @@ class AuthControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json))
                                 .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @DisplayName("Should refresh token successfully with 200 OK")
+        void shouldRefreshTokenSuccessfully() throws Exception {
+                var response = new AuthResponse("new-access-token", "new-refresh-token", "Bearer", 7200L);
+                when(refreshAuthTokenUseCase.execute(anyString())).thenReturn(response);
+
+                String json = """
+                                {
+                                    "refreshToken": "valid-refresh-token"
+                                }
+                                """;
+
+                mockMvc.perform(post("/auth/refresh")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.accessToken").value("new-access-token"))
+                                .andExpect(jsonPath("$.refreshToken").value("new-refresh-token"));
+        }
+
+        @Test
+        @DisplayName("Should logout successfully with 204 No Content")
+        void shouldLogoutSuccessfully() throws Exception {
+                String json = """
+                                {
+                                    "refreshToken": "valid-refresh-token"
+                                }
+                                """;
+
+                mockMvc.perform(post("/auth/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andExpect(status().isNoContent());
         }
 }

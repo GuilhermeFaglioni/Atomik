@@ -10,4 +10,8 @@ public interface TokenService {
     String extractSubject(String token);
 
     boolean validateToken(String token);
+
+    long getAccessTokenExpiresInSeconds();
+
+    long getRefreshTokenExpiresInSeconds();
 }

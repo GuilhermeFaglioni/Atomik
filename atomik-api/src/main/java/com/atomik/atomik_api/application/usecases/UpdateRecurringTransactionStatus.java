@@ -10,7 +10,6 @@ import com.atomik.atomik_api.domain.exception.RecurringTransactionNotFoundExcept
 import com.atomik.atomik_api.domain.exception.UnauthorizedException;
 import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.RecurringStatus;
-import com.atomik.atomik_api.domain.model.RecurringTransaction;
 import com.atomik.atomik_api.domain.repository.RecurringTransactionRepository;
 import com.atomik.atomik_api.domain.repository.UserRepository;
 
@@ -26,21 +25,19 @@ public class UpdateRecurringTransactionStatus {
     }
 
     @Transactional
-    public RecurringResponseDTO execute(String userId, String id, String status) {
+    public RecurringResponseDTO execute(String userId, String id, RecurringStatus status) {
         userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException("User not found"));
         var recurringTransaction = recurringTransactionRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new RecurringTransactionNotFoundException("Recurring transaction not found"));
         if (!recurringTransaction.getUserId().toString().equals(userId)) {
             throw new UnauthorizedException("Unauthorized");
         }
-        var newStatus = RecurringStatus.valueOf(status.toUpperCase());
-
-        var updatedTransaction = recurringTransaction.updateStatus(recurringTransaction, newStatus);
+        var updatedTransaction = recurringTransaction.updateStatus(recurringTransaction, status);
         recurringTransactionRepository.save(updatedTransaction);
         return toResponse(updatedTransaction);
     }
 
-    private RecurringResponseDTO toResponse(RecurringTransaction recurringTransaction) {
+    private RecurringResponseDTO toResponse(com.atomik.atomik_api.domain.model.RecurringTransaction recurringTransaction) {
         String destId = recurringTransaction.getDestinationAccountId() != null
                 ? recurringTransaction.getDestinationAccountId().toString()
                 : null;

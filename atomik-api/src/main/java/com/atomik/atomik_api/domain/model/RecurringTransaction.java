@@ -89,6 +89,11 @@ public class RecurringTransaction {
                 status, recurringTransaction.createdAt);
     }
 
+    public RecurringTransaction reschedule(LocalDateTime nextDueDate, RecurringStatus newStatus) {
+        return new RecurringTransaction(id, userId, categoryId, sourceAccountId, destinationAccountId, amount,
+                description, type, startDate, endDate, nextDueDate, frequency, newStatus, createdAt);
+    }
+
     public UUID getId() {
         return id;
     }

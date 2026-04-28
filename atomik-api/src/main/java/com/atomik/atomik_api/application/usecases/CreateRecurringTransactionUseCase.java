@@ -5,50 +5,38 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.atomik.atomik_api.application.service.FinancialResourceOwnershipService;
 import com.atomik.atomik_api.application.dto.CreateRecurringRequestDTO;
 import com.atomik.atomik_api.application.dto.RecurringResponseDTO;
-import com.atomik.atomik_api.domain.exception.AccountNotFoundException;
-import com.atomik.atomik_api.domain.exception.CategoryNotFoundException;
-import com.atomik.atomik_api.domain.exception.UserNotFoundException;
 import com.atomik.atomik_api.domain.model.RecurringTransaction;
-import com.atomik.atomik_api.domain.repository.AccountRepository;
-import com.atomik.atomik_api.domain.repository.CategoryRepository;
 import com.atomik.atomik_api.domain.repository.RecurringTransactionRepository;
-import com.atomik.atomik_api.domain.repository.UserRepository;
 
 @Service
 public class CreateRecurringTransactionUseCase {
     private final RecurringTransactionRepository recurringTransactionRepository;
-    private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
-    private final CategoryRepository categoryRepository;
+    private final FinancialResourceOwnershipService financialResourceOwnershipService;
 
     public CreateRecurringTransactionUseCase(RecurringTransactionRepository recurringTransactionRepository,
-            UserRepository userRepository, AccountRepository accountRepository,
-            CategoryRepository categoryRepository) {
+            FinancialResourceOwnershipService financialResourceOwnershipService) {
         this.recurringTransactionRepository = recurringTransactionRepository;
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
-        this.categoryRepository = categoryRepository;
+        this.financialResourceOwnershipService = financialResourceOwnershipService;
     }
 
     @Transactional
     public RecurringResponseDTO execute(CreateRecurringRequestDTO request) {
-        userRepository.findById(UUID.fromString(request.userId()))
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        categoryRepository.findById(UUID.fromString(request.categoryId()))
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
-        accountRepository.findById(UUID.fromString(request.sourceAccountId()))
-                .orElseThrow(() -> new AccountNotFoundException("Source account not found"));
+        UUID parsedUserId = financialResourceOwnershipService.requireExistingUser(request.userId());
+        financialResourceOwnershipService.requireOwnedCategory(parsedUserId, request.categoryId());
+        financialResourceOwnershipService.requireOwnedAccount(parsedUserId, request.sourceAccountId(),
+                "Source account not found");
         if (request.destinationAccountId() != null) {
-            accountRepository.findById(UUID.fromString(request.destinationAccountId()))
-                    .orElseThrow(() -> new AccountNotFoundException("Destination account not found"));
+            financialResourceOwnershipService.requireOwnedAccount(parsedUserId, request.destinationAccountId(),
+                    "Destination account not found");
             if (request.destinationAccountId().equals(request.sourceAccountId())) {
                 throw new IllegalArgumentException("Destination account must be different from source account");
             }
         }
 
-        var recurringTransaction = RecurringTransaction.create(UUID.fromString(request.userId()),
+        var recurringTransaction = RecurringTransaction.create(parsedUserId,
                 UUID.fromString(request.categoryId()), UUID.fromString(request.sourceAccountId()),
                 request.destinationAccountId() != null ? UUID.fromString(request.destinationAccountId()) : null,
                 request.amount(), request.description(), request.type(), request.frequency(), request.startDate(),

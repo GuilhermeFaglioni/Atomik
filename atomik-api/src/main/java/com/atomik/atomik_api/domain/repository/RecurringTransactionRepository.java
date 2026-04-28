@@ -16,6 +16,8 @@ public interface RecurringTransactionRepository {
 
     List<RecurringTransaction> findActiveByUserIdAndNextDueDateBefore(UUID userId, LocalDateTime date);
 
+    List<RecurringTransaction> findDueTransactions(LocalDateTime date);
+
     void save(RecurringTransaction recurringTransaction);
 
     void delete(UUID id);

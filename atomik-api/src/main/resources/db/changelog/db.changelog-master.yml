@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/migrations/004-add-recurring-transactions.yml
   - include:
       file: db/changelog/migrations/005-align-persistence-schema.yml
+  - include:
+      file: db/changelog/migrations/006-add-end-date-to-recurring-transactions.yml

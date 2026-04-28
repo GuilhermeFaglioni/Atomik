@@ -55,6 +55,8 @@ class AuthenticateUserUseCaseTest {
         when(passwordHasherService.verifyPassword(pass, "hashed_pass")).thenReturn(true);
         when(tokenService.generateAccessToken(user)).thenReturn("access_token");
         when(tokenService.generateRefreshToken()).thenReturn("refresh_token");
+        when(tokenService.getAccessTokenExpiresInSeconds()).thenReturn(7200L);
+        when(tokenService.getRefreshTokenExpiresInSeconds()).thenReturn(604800L);
 
         // Act
         var result = authenticateUserUseCase.execute(email, pass);
@@ -63,6 +65,7 @@ class AuthenticateUserUseCaseTest {
         assertNotNull(result);
         assertEquals("access_token", result.accessToken());
         assertEquals("refresh_token", result.refreshToken());
+        assertEquals(7200L, result.expiresIn());
         verify(refreshTokenRepository).save(anyString(), any(), anyLong());
     }
 

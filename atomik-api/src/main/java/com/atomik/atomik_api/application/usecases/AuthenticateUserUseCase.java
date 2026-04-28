@@ -33,11 +33,11 @@ public class AuthenticateUserUseCase {
 
         String access = tokenService.generateAccessToken(user);
         String refresh = tokenService.generateRefreshToken();
+        long accessTokenExpiresIn = tokenService.getAccessTokenExpiresInSeconds();
+        long refreshTokenExpiresIn = tokenService.getRefreshTokenExpiresInSeconds();
 
-        long expiresIn = 3600L;
+        refreshTokenRepository.save(refresh, user.getId(), refreshTokenExpiresIn);
 
-        refreshTokenRepository.save(refresh, user.getId(), expiresIn);
-
-        return new AuthResponse(access, refresh, "Bearer", expiresIn);
+        return new AuthResponse(access, refresh, "Bearer", accessTokenExpiresIn);
     }
 }

@@ -17,6 +17,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 
 @Component
 public class JwtTokenService implements TokenService {
+    private static final long ACCESS_TOKEN_EXPIRES_IN_SECONDS = 7200L;
+    private static final long REFRESH_TOKEN_EXPIRES_IN_SECONDS = 604800L;
 
     @Value("${api.security.token.secret}")
     private String secret;
@@ -58,6 +60,16 @@ public class JwtTokenService implements TokenService {
     @Override
     public boolean validateToken(String token) {
         return extractSubject(token) != null;
+    }
+
+    @Override
+    public long getAccessTokenExpiresInSeconds() {
+        return ACCESS_TOKEN_EXPIRES_IN_SECONDS;
+    }
+
+    @Override
+    public long getRefreshTokenExpiresInSeconds() {
+        return REFRESH_TOKEN_EXPIRES_IN_SECONDS;
     }
 
     private Instant genExpirationDate() {

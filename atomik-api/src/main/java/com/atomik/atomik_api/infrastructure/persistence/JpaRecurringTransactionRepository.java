@@ -19,4 +19,6 @@ public interface JpaRecurringTransactionRepository extends JpaRepository<Recurri
             UUID userId,
             RecurringStatus status,
             LocalDateTime date);
+
+    List<RecurringTransactionEntity> findByStatusAndNextDueDateBefore(RecurringStatus status, LocalDateTime date);
 }

@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
 import com.atomik.atomik_api.domain.model.RecurringStatus;
 import com.atomik.atomik_api.domain.model.RecurringTransaction;
 import com.atomik.atomik_api.domain.repository.RecurringTransactionRepository;
 import com.atomik.atomik_api.infrastructure.persistence.JpaRecurringTransactionRepository;
 import com.atomik.atomik_api.infrastructure.persistence.RecurringTransactionMapper;
 
+@Component
 public class DatabaseRecurringTransactionRepositoryAdapter implements RecurringTransactionRepository {
     private final JpaRecurringTransactionRepository jpaRecurringTransactionRepository;
     private final RecurringTransactionMapper recurringTransactionMapper;
@@ -45,6 +48,13 @@ public class DatabaseRecurringTransactionRepositoryAdapter implements RecurringT
     public List<RecurringTransaction> findActiveByUserIdAndNextDueDateBefore(UUID userId, LocalDateTime date) {
         return jpaRecurringTransactionRepository
                 .findByUser_IdAndStatusAndNextDueDateBefore(userId, RecurringStatus.ACTIVE, date).stream()
+                .map(recurringTransactionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<RecurringTransaction> findDueTransactions(LocalDateTime date) {
+        return jpaRecurringTransactionRepository.findByStatusAndNextDueDateBefore(RecurringStatus.ACTIVE, date).stream()
                 .map(recurringTransactionMapper::toDomain)
                 .toList();
     }
